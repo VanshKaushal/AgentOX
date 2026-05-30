@@ -27,7 +27,7 @@ export function initCmd(): Command {
       const hookDir = path.join(process.cwd(), '.git', 'hooks');
       const hookPath = path.join(hookDir, 'post-commit');
       if (fs.existsSync(hookDir)) {
-        const hook = `#!/bin/sh\nnpx agentos _log-commit 2>/dev/null || true\n`;
+        const hook = `#!/bin/sh\nnpx -y agentos _log-commit 2>/dev/null || true\n`;
         fs.writeFileSync(hookPath, hook);
         fs.chmodSync(hookPath, '755');
         console.log('✓ Git hook installed');
