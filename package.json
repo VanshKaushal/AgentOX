@@ -1,0 +1,23 @@
+{
+  "name": "agentos",
+  "version": "0.1.0",
+  "description": "Cross-agent continuity layer for AI coding assistants",
+  "bin": {
+    "agentos": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/index.ts",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "clipboardy": "^4.0.0",
+    "commander": "^12.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.4.0"
+  }
+}
