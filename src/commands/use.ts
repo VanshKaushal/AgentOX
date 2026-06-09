@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import { store } from '../store';
 
-const VALID = ['claude', 'cursor', 'opencode', 'aider', 'copilot', 'none'];
+const VALID = ['claude', 'cursor', 'opencode', 'aider', 'copilot', 'antigravity', 'windsurf', 'gemini', 'none'];
 
 export function useCmd(): Command {
   return new Command('use')

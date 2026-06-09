@@ -17,9 +17,10 @@ function formatTasks(pending: string[]): string {
 
 function formatLog(entries: ExecutionEntry[]): string {
   if (!entries.length) return '  (no history)';
-  return entries.map(e =>
-    `  [${e.agent}] ${e.timestamp.slice(0,10)} — ${e.files_changed.join(', ')}`
-  ).join('\n');
+  return entries.map(e => {
+    const msg = e.commit_message ? ` — "${e.commit_message}"` : '';
+    return `  [${e.agent}] ${e.timestamp.slice(0,10)}${msg} — ${e.files_changed.join(', ')}`;
+  }).join('\n');
 }
 
 export function generateBootstrap(targetAgent: string): string {

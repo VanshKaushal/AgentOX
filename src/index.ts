@@ -12,6 +12,7 @@ import { rollbackCmd } from './commands/rollback';
 import { reportCmd } from './commands/report';
 import { checkpointCmd } from './commands/checkpoint';
 import { serveCmd } from './commands/serve';
+import { objectiveCmd } from './commands/objective';
 // more imports added by later prompts
 
 const program = new Command();
@@ -28,5 +29,6 @@ program.addCommand(rollbackCmd());
 program.addCommand(reportCmd());
 program.addCommand(checkpointCmd());
 program.addCommand(serveCmd());
+program.addCommand(objectiveCmd());
 // more commands added by later prompts
 program.parse();

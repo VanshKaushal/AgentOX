@@ -13,6 +13,7 @@ export interface ExecutionEntry {
   agent: string;
   files_changed: string[];
   summary: string;
+  commit_message?: string;
   accepted: boolean;
   session_id: string;
 }
