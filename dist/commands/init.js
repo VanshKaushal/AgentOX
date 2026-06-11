@@ -14,6 +14,35 @@ function initCmd() {
         .description('Initialize AgentOS in current repo')
         .action(() => {
         store_1.store.ensureDir();
+        // Auto-generate Claude Code MCP config
+        const claudeDir = path_1.default.join(process.cwd(), '.claude');
+        const mcpConfig = {
+            mcpServers: {
+                agentox: {
+                    command: 'agentox',
+                    args: ['serve', 'start'],
+                    cwd: process.cwd()
+                }
+            }
+        };
+        if (!fs_1.default.existsSync(claudeDir)) {
+            fs_1.default.mkdirSync(claudeDir, { recursive: true });
+        }
+        const mcpPath = path_1.default.join(claudeDir, 'mcp.json');
+        if (!fs_1.default.existsSync(mcpPath)) {
+            fs_1.default.writeFileSync(mcpPath, JSON.stringify(mcpConfig, null, 2));
+            console.log('✓ Claude Code MCP config written to .claude/mcp.json');
+        }
+        // Auto-generate Cursor MCP config
+        const cursorDir = path_1.default.join(process.cwd(), '.cursor');
+        if (!fs_1.default.existsSync(cursorDir)) {
+            fs_1.default.mkdirSync(cursorDir, { recursive: true });
+        }
+        const cursorMcpPath = path_1.default.join(cursorDir, 'mcp.json');
+        if (!fs_1.default.existsSync(cursorMcpPath)) {
+            fs_1.default.writeFileSync(cursorMcpPath, JSON.stringify(mcpConfig, null, 2));
+            console.log('✓ Cursor MCP config written to .cursor/mcp.json');
+        }
         // Write default files only if they don't exist
         const p = (f) => path_1.default.join(process.cwd(), 'agentos', f);
         if (!fs_1.default.existsSync(p('state.json')))
@@ -33,7 +62,7 @@ function initCmd() {
         const hookDir = path_1.default.join(process.cwd(), '.git', 'hooks');
         const hookPath = path_1.default.join(hookDir, 'post-commit');
         if (fs_1.default.existsSync(hookDir)) {
-            const hook = `#!/bin/sh\nnpx agentos _log-commit 2>/dev/null || true\n`;
+            const hook = `#!/bin/sh\nnpx -y agentox _log-commit 2>/dev/null || true\n`;
             fs_1.default.writeFileSync(hookPath, hook);
             fs_1.default.chmodSync(hookPath, '755');
             console.log('✓ Git hook installed');
@@ -46,6 +75,6 @@ function initCmd() {
                 console.warn('⚠ agentos/ is in .gitignore — remove it or continuity will not persist');
             }
         }
-        console.log('✓ AgentOS initialized. Run: agentos status');
+        console.log('✓ AgentOS initialized. Run: agentox status');
     });
 }

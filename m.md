@@ -1,58 +1,70 @@
-Read agentos/state.json and agentos/execution_log.jsonl before starting. Do not rewrite existing files. Only add what the prompt asks for.
+Read src/commands/serve.ts and README.md.
 
+━━━ FIX 1: PID orphan bug ━━━
 
-Add `agentos serve` command to CLI. Install: npm install @modelcontextprotocol/sdk
+In serve.ts stop command, replace the action with:
 
-Create src/mcp/server.ts:
-
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
-import { store } from '../store';
-import { getWrapped } from '../templates';
-import { runAudit } from '../audit';
-
-const server = new Server(
-  { name: 'agentos', version: '0.1.0' },
-  { capabilities: { tools: {} } }
-);
-
-server.setRequestHandler(ListToolsRequestSchema, async () => ({
-  tools: [
-    { name: 'get_state', description: 'Get current AgentOS state', inputSchema: { type: 'object', properties: {} } },
-    { name: 'get_pending_tasks', description: 'Get pending task list', inputSchema: { type: 'object', properties: {} } },
-    { name: 'get_decisions', description: 'Get all decisions', inputSchema: { type: 'object', properties: {} } },
-    { name: 'get_bootstrap_prompt', description: 'Generate bootstrap prompt', inputSchema: { type: 'object', properties: { target_agent: { type: 'string' } }, required: ['target_agent'] } },
-    { name: 'log_session', description: 'Log a session entry', inputSchema: { type: 'object', properties: { agent: { type: 'string' }, files_changed: { type: 'array', items: { type: 'string' } }, summary: { type: 'string' } }, required: ['agent','files_changed','summary'] } }
-  ]
-}));
-
-server.setRequestHandler(CallToolRequestSchema, async (req) => {
-  const { name, arguments: args } = req.params;
-  switch (name) {
-    case 'get_state': return { content: [{ type: 'text', text: JSON.stringify(store.readState(), null, 2) }] };
-    case 'get_pending_tasks': return { content: [{ type: 'text', text: JSON.stringify(store.readTaskGraph().pending) }] };
-    case 'get_decisions': return { content: [{ type: 'text', text: JSON.stringify(store.readDecisions()) }] };
-    case 'get_bootstrap_prompt': return { content: [{ type: 'text', text: getWrapped((args as any).target_agent) }] };
-    case 'log_session': {
-      const { agent, files_changed, summary } = args as any;
-      const crypto = require('crypto');
-      store.appendLog({ timestamp: new Date().toISOString(), agent, files_changed, summary, accepted: true, session_id: crypto.randomUUID() });
-      return { content: [{ type: 'text', text: 'Logged' }] };
-    }
-    default: throw new Error(`Unknown tool: ${name}`);
+.action(() => {
+  const pidFile = path.join(
+    process.cwd(), 'agentos', '.mcp.pid'
+  );
+  if (!fs.existsSync(pidFile)) {
+    console.log('No MCP server PID file found.');
+    console.log('Server may not be running.');
+    return;
   }
-});
+  try {
+    const pid = parseInt(fs.readFileSync(pidFile,'utf8').trim());
+    // Check if process actually alive
+    try {
+      process.kill(pid, 0); // signal 0 = check only
+      process.kill(pid);    // actually kill it
+      fs.unlinkSync(pidFile);
+      console.log(`✓ MCP server stopped (PID ${pid})`);
+    } catch {
+      // Process already dead — clean up stale PID file
+      fs.unlinkSync(pidFile);
+      console.log('✓ Cleaned up stale PID file.');
+      console.log('  Server was already stopped.');
+    }
+  } catch(e) {
+    console.log('Failed to stop:', (e as Error).message);
+  }
+})
 
-export async function startMcpServer() {
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
-}
+━━━ FIX 2: README MCP compatibility table ━━━
 
-Create src/commands/serve.ts that calls startMcpServer() and saves PID to agentos/.mcp.pid.
+Add this section to README.md after the install section:
 
-VERIFY: agentos serve — starts without error. Test with MCP inspector if available.
+## IDE Compatibility
 
+| IDE / Tool | MCP Auto | Bootstrap Fallback |
+|------------|----------|--------------------|
+| Claude Code | ✅ Native | ✅ |
+| Cursor | ✅ Native | ✅ |
+| Windsurf | ✅ Native | ✅ |
+| Antigravity | ✅ (via MCP config) | ✅ |
+| VS Code + Copilot | ❌ (needs Cline/RooCode) | ✅ |
+| ChatGPT | ❌ | ✅ |
+| Any other AI | ❌ | ✅ |
 
-✓ Produces: full MCP server — agents read state natively without paste
-⚠ This is your 3-month moat. When MCP is default in Cursor/Windsurf, you already exist there.
+**AgentOX works everywhere via Bootstrap fallback.
+MCP gives you zero-paste automation in supported IDEs.**
+
+━━━ FIX 3: agentox serve start — add startup message ━━━
+
+In serve.ts start command before startMcpServer():
+Add:
+console.error('━━━ AgentOX MCP Server ━━━');
+console.error('Status: running');
+console.error('Mode: stdio (for Claude Code / Cursor)');
+console.error('Tools available: 13');
+console.error('Run "agentox serve config" to get');
+console.error('the config JSON for your IDE.');
+console.error('Press Ctrl+C to stop.');
+console.error('━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+━━━ AFTER FIXES ━━━
+npm run build → 0 errors
+npm version patch  → bumps to 0.1.2
+npm publish --access public

@@ -1,9 +1,9 @@
 {
-  "name": "agentos",
-  "version": "0.1.0",
+  "name": "agentox",
+  "version": "0.1.1",
   "description": "Cross-agent continuity layer for AI coding assistants",
   "bin": {
-    "agentos": "./dist/index.js"
+    "agentox": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc",

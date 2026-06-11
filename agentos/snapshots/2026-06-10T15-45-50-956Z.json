@@ -1,0 +1,82 @@
+{
+  "timestamp": "2026-06-10T15:45:50.954Z",
+  "state": {
+    "active_agent": "cursor",
+    "session_start": "2026-06-10T15:45:18.685Z",
+    "objective": "test project",
+    "pending_tasks": [],
+    "drift_score": 0,
+    "fingerprint": "1ba5905dc452",
+    "version": "0.1.0"
+  },
+  "decisions": {
+    "decisions": []
+  },
+  "task_graph": {
+    "pending": [],
+    "in_progress": [],
+    "completed": [
+      "build login page"
+    ]
+  },
+  "arch_map": {},
+  "log_tail": [
+    {
+      "timestamp": "2026-06-09T07:20:01.056Z",
+      "agent": "none",
+      "files_changed": [
+        "package-lock.json",
+        "package.json",
+        "src/commands/init.ts"
+      ],
+      "summary": "3 file(s) changed: package-lock.json, package.json, src/commands/init.ts",
+      "accepted": true,
+      "session_id": "7ca47e10-f2f1-4599-b654-9a62a798f5fc"
+    },
+    {
+      "timestamp": "2026-06-09T14:53:54.787Z",
+      "agent": "antigravity",
+      "files_changed": [
+        "m.md"
+      ],
+      "commit_message": "test commit message",
+      "summary": "test commit message",
+      "accepted": true,
+      "session_id": "1ecdeddd-6e13-4609-baf1-a51fcccdc105"
+    },
+    {
+      "timestamp": "2026-06-10T15:45:12.720Z",
+      "agent": "cursor",
+      "files_changed": [
+        "m.md"
+      ],
+      "commit_message": "test commit message",
+      "summary": "test commit message",
+      "accepted": true,
+      "session_id": "fb99b987-57e5-477d-a929-496ec1e34dc4"
+    },
+    {
+      "timestamp": "2026-06-10T15:45:41.151Z",
+      "agent": "cursor",
+      "files_changed": [
+        "m.md"
+      ],
+      "commit_message": "test commit",
+      "summary": "test commit",
+      "accepted": true,
+      "session_id": "9866002d-d279-429c-b9e8-9e86e752b3af"
+    },
+    {
+      "timestamp": "2026-06-10T15:45:45.389Z",
+      "agent": "cursor",
+      "files_changed": [
+        "m.md"
+      ],
+      "commit_message": "test commit",
+      "summary": "test commit",
+      "accepted": true,
+      "session_id": "82904faa-2549-4ac0-8324-6c020300db4e"
+    }
+  ],
+  "fingerprint": "1ba5905dc452"
+}

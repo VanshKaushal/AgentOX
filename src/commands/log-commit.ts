@@ -13,14 +13,15 @@ export function logCommitCmd(): Command {
       // Get changed files from last commit
       let filesChanged: string[] = [];
       try {
-        const diff = execSync('git diff --name-only HEAD~1 HEAD 2>/dev/null || git diff --name-only HEAD', { encoding: 'utf8' });
+        const diff = execSync('git show --name-only --pretty=format: HEAD', { encoding: 'utf8' });
         filesChanged = diff.trim().split('\n').filter(Boolean);
       } catch { return; } // first commit edge case
 
       // Read .agentosignore and filter
       let ignorePatterns: string[] = [];
       try {
-        const ig = require('fs').readFileSync('.agentosignore', 'utf8');
+        const rootDir = store.getRootDir();
+        const ig = require('fs').readFileSync(require('path').join(rootDir, '.agentosignore'), 'utf8');
         ignorePatterns = ig.split('\n').filter((l: string) => l.trim() && !l.startsWith('#'));
       } catch {}
       filesChanged = filesChanged.filter(f => !ignorePatterns.some(p => f.startsWith(p.replace('/', ''))));

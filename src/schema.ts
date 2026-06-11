@@ -44,7 +44,7 @@ export function defaultState(): AgentState {
   return {
     active_agent: "none",
     session_start: new Date().toISOString(),
-    objective: "Not set — run: agentos objective \"your goal\"",
+    objective: "Not set — run: agentox objective \"your goal\"",
     pending_tasks: [],
     drift_score: 0,
     fingerprint: "",

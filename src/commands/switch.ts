@@ -8,13 +8,13 @@ export function switchCmd(): Command {
     .description('Generate bootstrap prompt for new agent and copy to clipboard')
     .argument('<agent>', 'Target agent: claude|cursor|aider|opencode')
     .action(async (agent: string) => {
-      if (!store.exists()) { console.error('Not initialized. Run: agentos init'); process.exit(1); }
+      if (!store.exists()) { console.error('Not initialized. Run: agentox init'); process.exit(1); }
 
       // Auto-snapshot before switching
       console.log('📸 Saving snapshot before switch...');
       // inline snapshot (import from snapshot logic)
       const { execSync } = require('child_process');
-      try { execSync('npx agentos snapshot', { stdio: 'inherit' }); } catch {}
+      try { execSync('npx agentox snapshot', { stdio: 'inherit' }); } catch {}
 
       const prompt = getWrapped(agent);
 
@@ -35,6 +35,6 @@ export function switchCmd(): Command {
       console.log('\n─── Bootstrap Prompt ──────────────────');
       console.log(prompt);
       console.log('──────────────────────────────────────\n');
-      console.log(`✓ Now open ${agent} and paste. Run: agentos use ${agent}`);
+      console.log(`✓ Now open ${agent} and paste. Run: agentox use ${agent}`);
     });
 }

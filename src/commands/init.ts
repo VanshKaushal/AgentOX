@@ -11,6 +11,37 @@ export function initCmd(): Command {
     .action(() => {
       store.ensureDir();
 
+      // Auto-generate Claude Code MCP config
+      const claudeDir = path.join(process.cwd(), '.claude');
+      const mcpConfig = {
+        mcpServers: {
+          agentox: {
+            command: 'agentox',
+            args: ['serve', 'start'],
+            cwd: process.cwd()
+          }
+        }
+      };
+      if (!fs.existsSync(claudeDir)) {
+        fs.mkdirSync(claudeDir, { recursive: true });
+      }
+      const mcpPath = path.join(claudeDir, 'mcp.json');
+      if (!fs.existsSync(mcpPath)) {
+        fs.writeFileSync(mcpPath, JSON.stringify(mcpConfig, null, 2));
+        console.log('✓ Claude Code MCP config written to .claude/mcp.json');
+      }
+
+      // Auto-generate Cursor MCP config
+      const cursorDir = path.join(process.cwd(), '.cursor');
+      if (!fs.existsSync(cursorDir)) {
+        fs.mkdirSync(cursorDir, { recursive: true });
+      }
+      const cursorMcpPath = path.join(cursorDir, 'mcp.json');
+      if (!fs.existsSync(cursorMcpPath)) {
+        fs.writeFileSync(cursorMcpPath, JSON.stringify(mcpConfig, null, 2));
+        console.log('✓ Cursor MCP config written to .cursor/mcp.json');
+      }
+
       // Write default files only if they don't exist
       const p = (f: string) => path.join(process.cwd(), 'agentos', f);
       if (!fs.existsSync(p('state.json'))) store.writeState(defaultState());
@@ -27,7 +58,7 @@ export function initCmd(): Command {
       const hookDir = path.join(process.cwd(), '.git', 'hooks');
       const hookPath = path.join(hookDir, 'post-commit');
       if (fs.existsSync(hookDir)) {
-        const hook = `#!/bin/sh\nnpx -y agentos _log-commit 2>/dev/null || true\n`;
+        const hook = `#!/bin/sh\nnpx -y agentox _log-commit 2>/dev/null || true\n`;
         fs.writeFileSync(hookPath, hook);
         fs.chmodSync(hookPath, '755');
         console.log('✓ Git hook installed');
@@ -42,6 +73,6 @@ export function initCmd(): Command {
         }
       }
 
-      console.log('✓ AgentOS initialized. Run: agentos status');
+      console.log('✓ AgentOS initialized. Run: agentox status');
     });
 }

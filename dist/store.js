@@ -6,9 +6,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.store = void 0;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
-const ROOT = () => path_1.default.join(process.cwd(), 'agentos');
+function findRoot() {
+    let current = process.cwd();
+    while (current !== path_1.default.dirname(current)) {
+        if (fs_1.default.existsSync(path_1.default.join(current, 'agentos', 'state.json')))
+            return path_1.default.join(current, 'agentos');
+        current = path_1.default.dirname(current);
+    }
+    return path_1.default.join(process.cwd(), 'agentos');
+}
+const ROOT = () => findRoot();
 const p = (file) => path_1.default.join(ROOT(), file);
 exports.store = {
+    getRootDir() { return path_1.default.dirname(ROOT()); },
     exists() { return fs_1.default.existsSync(ROOT()); },
     readState() { return JSON.parse(fs_1.default.readFileSync(p('state.json'), 'utf8')); },
     writeState(s) { fs_1.default.writeFileSync(p('state.json'), JSON.stringify(s, null, 2)); },

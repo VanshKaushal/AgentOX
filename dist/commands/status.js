@@ -8,7 +8,7 @@ function statusCmd() {
         .description('Show current AgentOS state')
         .action(() => {
         if (!store_1.store.exists()) {
-            console.error('Not initialized. Run: agentos init');
+            console.error('Not initialized. Run: agentox init');
             process.exit(1);
         }
         const s = store_1.store.readState();

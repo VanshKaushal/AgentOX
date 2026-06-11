@@ -18,7 +18,7 @@ export function checkpointCmd(): Command {
       rl.question('\nApprove session? Continue to next agent? (yes/no): ', (ans) => {
         rl.close();
         if (ans.toLowerCase() === 'yes') {
-          console.log('✓ Checkpoint cleared. Run: agentos switch ');
+          console.log('✓ Checkpoint cleared. Run: agentox switch ');
         } else {
           console.log('✗ Checkpoint blocked. Review drift and fix before switching.');
           process.exit(1);

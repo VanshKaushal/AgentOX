@@ -2,10 +2,20 @@ import fs from 'fs';
 import path from 'path';
 import { AgentState, ExecutionEntry, DecisionStore, ArchitectureMap, TaskGraph } from './schema';
 
-const ROOT = () => path.join(process.cwd(), 'agentos');
+function findRoot(): string {
+  let current = process.cwd();
+  while (current !== path.dirname(current)) {
+    if (fs.existsSync(path.join(current, 'agentos', 'state.json'))) return path.join(current, 'agentos');
+    current = path.dirname(current);
+  }
+  return path.join(process.cwd(), 'agentos');
+}
+
+const ROOT = () => findRoot();
 const p = (file: string) => path.join(ROOT(), file);
 
 export const store = {
+  getRootDir(): string { return path.dirname(ROOT()); },
   exists(): boolean { return fs.existsSync(ROOT()); },
 
   readState(): AgentState { return JSON.parse(fs.readFileSync(p('state.json'), 'utf8')); },

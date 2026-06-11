@@ -16,7 +16,7 @@ import { objectiveCmd } from './commands/objective';
 // more imports added by later prompts
 
 const program = new Command();
-program.name('agentos').description('Cross-agent continuity layer').version('0.1.0');
+program.name('agentox').description('Cross-agent continuity layer').version('0.1.1');
 program.addCommand(initCmd());
 program.addCommand(logCommitCmd());
 program.addCommand(useCmd());
@@ -30,5 +30,7 @@ program.addCommand(reportCmd());
 program.addCommand(checkpointCmd());
 program.addCommand(serveCmd());
 program.addCommand(objectiveCmd());
+import { watchCmd } from './commands/watch';
 // more commands added by later prompts
+program.addCommand(watchCmd());
 program.parse();

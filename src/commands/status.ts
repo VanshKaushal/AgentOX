@@ -5,7 +5,7 @@ export function statusCmd(): Command {
   return new Command('status')
     .description('Show current AgentOS state')
     .action(() => {
-      if (!store.exists()) { console.error('Not initialized. Run: agentos init'); process.exit(1); }
+      if (!store.exists()) { console.error('Not initialized. Run: agentox init'); process.exit(1); }
       const s = store.readState();
       const tasks = store.readTaskGraph();
       const log = store.readLog(3);

@@ -14,7 +14,7 @@ function switchCmd() {
         .argument('<agent>', 'Target agent: claude|cursor|aider|opencode')
         .action(async (agent) => {
         if (!store_1.store.exists()) {
-            console.error('Not initialized. Run: agentos init');
+            console.error('Not initialized. Run: agentox init');
             process.exit(1);
         }
         // Auto-snapshot before switching
@@ -22,7 +22,7 @@ function switchCmd() {
         // inline snapshot (import from snapshot logic)
         const { execSync } = require('child_process');
         try {
-            execSync('npx agentos snapshot', { stdio: 'inherit' });
+            execSync('npx agentox snapshot', { stdio: 'inherit' });
         }
         catch { }
         const prompt = (0, templates_1.getWrapped)(agent);
@@ -42,6 +42,6 @@ function switchCmd() {
         console.log('\n─── Bootstrap Prompt ──────────────────');
         console.log(prompt);
         console.log('──────────────────────────────────────\n');
-        console.log(`✓ Now open ${agent} and paste. Run: agentos use ${agent}`);
+        console.log(`✓ Now open ${agent} and paste. Run: agentox use ${agent}`);
     });
 }

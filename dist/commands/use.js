@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.useCmd = useCmd;
 const commander_1 = require("commander");
 const store_1 = require("../store");
-const VALID = ['claude', 'cursor', 'opencode', 'aider', 'copilot', 'none'];
+const VALID = ['claude', 'cursor', 'opencode', 'aider', 'copilot', 'antigravity', 'windsurf', 'gemini', 'none'];
 function useCmd() {
     return new commander_1.Command('use')
         .description('Set active agent')

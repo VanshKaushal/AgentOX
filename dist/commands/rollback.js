@@ -18,7 +18,7 @@ function rollbackCmd() {
         if (!snapshot) {
             console.log('\nAvailable snapshots:');
             files.slice(0, 10).forEach((f, i) => console.log(`  ${i + 1}. ${f}`));
-            console.log('\nRun: agentos rollback <filename>');
+            console.log('\nRun: agentox rollback <filename>');
             return;
         }
         const snapPath = path_1.default.join(snapDir, snapshot);
