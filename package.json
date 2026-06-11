@@ -1,6 +1,6 @@
 {
   "name": "agentox",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Cross-agent continuity layer for AI coding assistants",
   "bin": {
     "agentox": "./dist/index.js"
