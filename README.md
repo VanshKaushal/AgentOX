@@ -2,7 +2,7 @@
   <h1>🤖 AgentOS</h1>
   <p><b>Cross-Agent Continuity Layer for AI Coding Assistants</b></p>
 
-  [![npm version](https://badge.fury.io/js/agentos.svg)](https://badge.fury.io/js/agentos)
+  [![npm version](https://badge.fury.io/js/agentox.svg)](https://badge.fury.io/js/agentox)
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 </div>
@@ -30,7 +30,7 @@ Your next AI agent can immediately pick up where the last one left off!
 ## ⚡ Features
 
 - **🧠 Shared Memory State**: Maintain task lists, goals, and architectural decisions across sessions.
-- **🔄 Seamless Handoffs**: Automatically generate a "bootstrap" prompt for your next AI agent via `agentos switch <agent>`.
+- **🔄 Seamless Handoffs**: Automatically generate a "bootstrap" prompt for your next AI agent via `agentox switch <agent>`.
 - **📸 Intelligent Snapshots**: Take snapshots of your workspace before handing it over to another agent.
 - **🛡️ Hard Decisions**: Enforce architectural guidelines that AI agents are strictly instructed *not* to override (`--hard`).
 - **🔗 Git Integration**: Automatically logs AI agent activity into the execution log on every `git commit`.
@@ -42,9 +42,23 @@ Your next AI agent can immediately pick up where the last one left off!
 AgentOS is built with Node.js and TypeScript. You can install it globally via npm:
 
 ```bash
-npm install -g agentos
+npm install -g agentox
 ```
 
+## IDE Compatibility
+
+| IDE / Tool | MCP Auto | Bootstrap Fallback |
+|------------|----------|--------------------|
+| Claude Code | ✅ Native | ✅ |
+| Cursor | ✅ Native | ✅ |
+| Windsurf | ✅ Native | ✅ |
+| Antigravity | ✅ (via MCP config) | ✅ |
+| VS Code + Copilot | ❌ (needs Cline/RooCode) | ✅ |
+| ChatGPT | ❌ | ✅ |
+| Any other AI | ❌ | ✅ |
+
+**AgentOX works everywhere via Bootstrap fallback.
+MCP gives you zero-paste automation in supported IDEs.**
 
 ---
 
@@ -55,14 +69,14 @@ npm install -g agentos
 Navigate to your existing project repository and run:
 
 ```bash
-agentos init
+agentox init
 ```
 *This creates the `.agentos/` directory and sets up the continuity layer, including a Git post-commit hook for tracking changes.*
 
 ### 2. Set your current Agent
 
 ```bash
-agentos use claude
+agentox use claude
 ```
 *(Options: claude, cursor, aider, opencode)*
 
@@ -70,14 +84,14 @@ agentos use claude
 
 ```bash
 # Add pending tasks
-agentos task add "Build the login authentication flow"
-agentos task add "Setup PostgreSQL database"
+agentox task add "Build the login authentication flow"
+agentox task add "Setup PostgreSQL database"
 
 # Mark a task as done
-agentos task done 1
+agentox task done 1
 
 # Enforce an architectural decision
-agentos decision add "Use strictly React and functional components" --hard
+agentox decision add "Use strictly React and functional components" --hard
 ```
 
 ### 4. Switch to a new Agent
@@ -85,14 +99,14 @@ agentos decision add "Use strictly React and functional components" --hard
 If you want to move from your current IDE/agent to another (e.g., from Cursor to Claude), use:
 
 ```bash
-agentos switch cursor
+agentox switch cursor
 ```
 *This command auto-saves a snapshot, generates a Bootstrap Prompt, copies it to your clipboard, and sets the active agent.*
 
 ### 5. Check Status
 
 ```bash
-agentos status
+agentox status
 ```
 *Displays the current state, active agent, pending tasks, recent decisions, and file tree drift.*
 
@@ -102,16 +116,16 @@ agentos status
 
 | Command | Description |
 |---|---|
-| `agentos init` | Initializes AgentOS in the current repo, setting up state files and git hooks. |
-| `agentos status` | Displays the current agent status, tasks, and system state. |
-| `agentos use <agent>` | Sets the active agent without generating a handoff prompt. |
-| `agentos switch <agent>` | Snapshots state, generates a handoff prompt, copies it, and sets active agent. |
-| `agentos task add/done/list` | Manage your agent's pending and completed tasks. |
-| `agentos decision add/list` | Manage architectural decisions. Use `--hard` to make them strict for AI. |
-| `agentos snapshot` | Manually captures a snapshot of the workspace and state. |
-| `agentos rollback` | Reverts the workspace to a previous snapshot. |
-| `agentos log-commit` | Logs git commits to the execution history (used mainly by the auto-hook). |
-| `agentos repair` | Validates and fixes corrupted `.agentos/` JSON state files. |
+| `agentox init` | Initializes AgentOS in the current repo, setting up state files and git hooks. |
+| `agentox status` | Displays the current agent status, tasks, and system state. |
+| `agentox use <agent>` | Sets the active agent without generating a handoff prompt. |
+| `agentox switch <agent>` | Snapshots state, generates a handoff prompt, copies it, and sets active agent. |
+| `agentox task add/done/list` | Manage your agent's pending and completed tasks. |
+| `agentox decision add/list` | Manage architectural decisions. Use `--hard` to make them strict for AI. |
+| `agentox snapshot` | Manually captures a snapshot of the workspace and state. |
+| `agentox rollback` | Reverts the workspace to a previous snapshot. |
+| `agentox log-commit` | Logs git commits to the execution history (used mainly by the auto-hook). |
+| `agentox repair` | Validates and fixes corrupted `.agentos/` JSON state files. |
 
 ---
 
@@ -128,7 +142,7 @@ graph TD;
     C -->|task_graph.json| F[Pending Tasks];
     C -->|execution_log.jsonl| G[Commit History];
     
-    B -->|agentos switch| H[Bootstrap Prompt];
+    B -->|agentox switch| H[Bootstrap Prompt];
     H --> I[Claude / Cursor / Aider];
     I -->|Reads/Applies Context| J[Codebase];
 ```
