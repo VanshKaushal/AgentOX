@@ -1,9 +1,9 @@
 {
   "active_agent": "cursor",
-  "session_start": "2026-06-10T15:45:51.058Z",
-  "objective": "test project",
+  "session_start": "2026-06-14T00:42:11.575Z",
+  "objective": "cold verify test",
   "pending_tasks": [],
   "drift_score": 0,
-  "fingerprint": "1ba5905dc452",
+  "fingerprint": "d8d934a2fe58",
   "version": "0.1.0"
 }

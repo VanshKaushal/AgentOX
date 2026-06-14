@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import { initCmd } from './commands/init';
-import { logCommitCmd } from './commands/log-commit';
+import { logCommitCmd, logPublicCmd } from './commands/log-commit';
 import { useCmd } from './commands/use';
 import { statusCmd } from './commands/status';
 import { taskCmd } from './commands/task';
@@ -19,6 +19,7 @@ const program = new Command();
 program.name('agentox').description('Cross-agent continuity layer').version('0.1.1');
 program.addCommand(initCmd());
 program.addCommand(logCommitCmd());
+program.addCommand(logPublicCmd());
 program.addCommand(useCmd());
 program.addCommand(statusCmd());
 program.addCommand(taskCmd());

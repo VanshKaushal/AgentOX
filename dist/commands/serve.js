@@ -62,13 +62,11 @@ function serveCmd() {
     cmd.command('config')
         .description('Print MCP config to add to Claude Code / Cursor')
         .action(() => {
-        const cwd = process.cwd();
         const config = {
             mcpServers: {
                 agentox: {
                     command: 'agentox',
-                    args: ['serve', 'start'],
-                    cwd: cwd
+                    args: ['serve', 'start']
                 }
             }
         };

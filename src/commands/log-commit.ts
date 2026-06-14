@@ -47,5 +47,24 @@ export function logCommitCmd(): Command {
       };
 
       store.appendLog(entry);
+  });
+}
+
+export function logPublicCmd(): Command {
+  return new Command('log')
+    .description('View recent execution log')
+    .action(() => {
+      if (!store.exists()) {
+        console.log('Not initialized. Run: agentox init');
+        return;
+      }
+      const logs = store.readLog(20);
+      if (logs.length === 0) {
+        console.log('No logs found.');
+        return;
+      }
+      logs.forEach(l => {
+        console.log(`[${l.timestamp}] ${l.agent || 'user'}: ${l.summary}`);
+      });
     });
 }

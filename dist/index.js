@@ -20,6 +20,7 @@ const program = new commander_1.Command();
 program.name('agentox').description('Cross-agent continuity layer').version('0.1.1');
 program.addCommand((0, init_1.initCmd)());
 program.addCommand((0, log_commit_1.logCommitCmd)());
+program.addCommand((0, log_commit_1.logPublicCmd)());
 program.addCommand((0, use_1.useCmd)());
 program.addCommand((0, status_1.statusCmd)());
 program.addCommand((0, task_1.taskCmd)());

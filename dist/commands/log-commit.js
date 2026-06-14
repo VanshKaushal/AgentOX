@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.logCommitCmd = logCommitCmd;
+exports.logPublicCmd = logPublicCmd;
 const commander_1 = require("commander");
 const child_process_1 = require("child_process");
 const store_1 = require("../store");
@@ -52,5 +53,23 @@ function logCommitCmd() {
             session_id: crypto_1.default.randomUUID()
         };
         store_1.store.appendLog(entry);
+    });
+}
+function logPublicCmd() {
+    return new commander_1.Command('log')
+        .description('View recent execution log')
+        .action(() => {
+        if (!store_1.store.exists()) {
+            console.log('Not initialized. Run: agentox init');
+            return;
+        }
+        const logs = store_1.store.readLog(20);
+        if (logs.length === 0) {
+            console.log('No logs found.');
+            return;
+        }
+        logs.forEach(l => {
+            console.log(`[${l.timestamp}] ${l.agent || 'user'}: ${l.summary}`);
+        });
     });
 }

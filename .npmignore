@@ -1,0 +1,30 @@
+# Source
+src/
+tsconfig.json
+
+# Test and dev files
+test*.txt
+test*.ts
+test*.js
+e2e*.ps1
+m.md
+*.tgz
+
+# User data — never ship
+agentos/
+.agentosignore
+
+# VSCode extension — separate project
+agentos-vscode/
+
+# Docs
+docs/
+
+# Git
+.git/
+.gitignore
+
+# Environment
+.env
+.env.*
+node_modules/

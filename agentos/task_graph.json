@@ -1,8 +1,7 @@
 {
-  "pending": [],
+  "pending": [
+    "verify publish works"
+  ],
   "in_progress": [],
-  "completed": [
-    "build login page",
-    "implement a PDF parser"
-  ]
+  "completed": []
 }
