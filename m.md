@@ -1,42 +1,38 @@
-Read src/commands/init.ts and src/store.ts.
+Read src/commands/init.ts and src/store.ts carefully.
 
-BUG: agentox init crashes with ENOENT because
-agentos/snapshots/ and agentos/summaries/ folders
-are not created before files are written to them.
+CRITICAL BUG: agentox init crashes with ENOENT on 
+execution_log.jsonl and snapshots/ because folders
+don't exist when files are written.
 
-FIX in src/store.ts — find ensureDir() function.
-Replace entire ensureDir() with:
+LOOK at the init.ts action() function body.
+Find the VERY FIRST operation inside action().
 
-ensureDir(): void {
-  const dirs = [
-    ROOT(),
-    path.join(ROOT(), 'snapshots'),
-    path.join(ROOT(), 'summaries')
-  ];
-  dirs.forEach(d => {
-    if (!fs.existsSync(d)) {
-      fs.mkdirSync(d, { recursive: true });
-    }
-  });
-},
+It must be store.ensureDir() BEFORE anything else.
+If store.ensureDir() is called AFTER any fs.writeFileSync
+or after MCP config writes → that is the bug.
 
-FIX in src/commands/init.ts — find the action() function.
-The VERY FIRST LINE inside action() must be:
-  store.ensureDir();
+FIX: Move store.ensureDir() to be the absolute 
+first line inside the action() callback body.
 
-Before any other operation including MCP config writes.
-Move store.ensureDir() to be line 1 of the action body.
+ALSO look at store.ts ensureDir() function.
+It must create ALL THREE directories:
+1. path.join(ROOT())                    ← agentos/
+2. path.join(ROOT(), 'snapshots')       ← agentos/snapshots/
+3. path.join(ROOT(), 'summaries')       ← agentos/summaries/
+
+Using fs.mkdirSync(dir, { recursive: true }) for each.
+
+If any of these 3 are missing from ensureDir() → add them.
 
 After fix:
 npm run build
-node dist/index.js --version
-# Must show: 0.1.4
+node -e "
+  const fs = require('fs');
+  const path = require('path');
+  process.chdir('C:\\\\ct3');
+  require('./dist/commands/init.js');
+"
 
-Then test:
-mkdir C:\testfix && cd C:\testfix
-git init
-git commit --allow-empty -m "start"
-agentox init
-# Must show success with NO ENOENT error
-agentox switch cursor
-# Must NOT crash on snapshots folder
+Simpler verify — just run:
+node dist/index.js init
+from inside C:\ct3 folder and confirm NO ENOENT error.

@@ -1,7 +1,7 @@
 {
   "active_agent": "cursor",
-  "session_start": "2026-06-14T01:19:34.716Z",
-  "objective": "final verification",
+  "session_start": "2026-06-14T01:33:06.560Z",
+  "objective": "Not set — run: agentox objective \"your goal\"",
   "pending_tasks": [],
   "drift_score": 0,
   "fingerprint": "e3b0c44298fc",
