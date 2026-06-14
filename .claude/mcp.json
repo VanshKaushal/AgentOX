@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "agentox": {
+      "command": "agentox",
+      "args": [
+        "serve",
+        "start"
+      ],
+      "cwd": "E:\\Code\\AgentOS"
+    }
+  }
+}

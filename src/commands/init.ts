@@ -9,7 +9,19 @@ export function initCmd(): Command {
   return new Command('init')
     .description('Initialize AgentOS in current repo')
     .action(() => {
-      store.ensureDir();
+      const agentosDir = path.join(process.cwd(), 'agentos');
+      const snapshotsDir = path.join(agentosDir, 'snapshots');
+      const summariesDir = path.join(agentosDir, 'summaries');
+
+      if (!fs.existsSync(agentosDir)) {
+        fs.mkdirSync(agentosDir, { recursive: true });
+      }
+      if (!fs.existsSync(snapshotsDir)) {
+        fs.mkdirSync(snapshotsDir, { recursive: true });
+      }
+      if (!fs.existsSync(summariesDir)) {
+        fs.mkdirSync(summariesDir, { recursive: true });
+      }
 
       // Auto-generate Claude Code MCP config
       const claudeDir = path.join(process.cwd(), '.claude');

@@ -1,38 +1,35 @@
-Read src/commands/init.ts and src/store.ts carefully.
+Read src/commands/init.ts ONLY.
 
-CRITICAL BUG: agentox init crashes with ENOENT on 
-execution_log.jsonl and snapshots/ because folders
-don't exist when files are written.
+The store.ensureDir() call is broken/unreliable.
+Replace it with inline directory creation directly 
+in init.ts action() — do not rely on store.ensureDir().
 
-LOOK at the init.ts action() function body.
-Find the VERY FIRST operation inside action().
+Replace the line:
+  store.ensureDir();
 
-It must be store.ensureDir() BEFORE anything else.
-If store.ensureDir() is called AFTER any fs.writeFileSync
-or after MCP config writes → that is the bug.
+With these lines:
 
-FIX: Move store.ensureDir() to be the absolute 
-first line inside the action() callback body.
+const agentosDir = path.join(process.cwd(), 'agentos');
+const snapshotsDir = path.join(agentosDir, 'snapshots');
+const summariesDir = path.join(agentosDir, 'summaries');
 
-ALSO look at store.ts ensureDir() function.
-It must create ALL THREE directories:
-1. path.join(ROOT())                    ← agentos/
-2. path.join(ROOT(), 'snapshots')       ← agentos/snapshots/
-3. path.join(ROOT(), 'summaries')       ← agentos/summaries/
+if (!fs.existsSync(agentosDir)) {
+  fs.mkdirSync(agentosDir, { recursive: true });
+}
+if (!fs.existsSync(snapshotsDir)) {
+  fs.mkdirSync(snapshotsDir, { recursive: true });
+}
+if (!fs.existsSync(summariesDir)) {
+  fs.mkdirSync(summariesDir, { recursive: true });
+}
 
-Using fs.mkdirSync(dir, { recursive: true }) for each.
+Do not change anything else in the file.
+Do not remove store.ensureDir() from store.ts.
+Just replace that one line in init.ts.
 
-If any of these 3 are missing from ensureDir() → add them.
+After: npm run build
 
-After fix:
-npm run build
-node -e "
-  const fs = require('fs');
-  const path = require('path');
-  process.chdir('C:\\\\ct3');
-  require('./dist/commands/init.js');
-"
-
-Simpler verify — just run:
+Verify:
 node dist/index.js init
-from inside C:\ct3 folder and confirm NO ENOENT error.
+from inside a fresh folder with git init done.
+Must show zero ENOENT errors.

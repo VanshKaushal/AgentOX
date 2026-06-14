@@ -13,7 +13,18 @@ function initCmd() {
     return new commander_1.Command('init')
         .description('Initialize AgentOS in current repo')
         .action(() => {
-        store_1.store.ensureDir();
+        const agentosDir = path_1.default.join(process.cwd(), 'agentos');
+        const snapshotsDir = path_1.default.join(agentosDir, 'snapshots');
+        const summariesDir = path_1.default.join(agentosDir, 'summaries');
+        if (!fs_1.default.existsSync(agentosDir)) {
+            fs_1.default.mkdirSync(agentosDir, { recursive: true });
+        }
+        if (!fs_1.default.existsSync(snapshotsDir)) {
+            fs_1.default.mkdirSync(snapshotsDir, { recursive: true });
+        }
+        if (!fs_1.default.existsSync(summariesDir)) {
+            fs_1.default.mkdirSync(summariesDir, { recursive: true });
+        }
         // Auto-generate Claude Code MCP config
         const claudeDir = path_1.default.join(process.cwd(), '.claude');
         const mcpConfig = {
