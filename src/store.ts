@@ -41,10 +41,15 @@ export const store = {
   },
 
   ensureDir(): void {
-    if (!fs.existsSync(ROOT())) fs.mkdirSync(ROOT(), { recursive: true });
-    const snaps = path.join(ROOT(), 'snapshots');
-    if (!fs.existsSync(snaps)) fs.mkdirSync(snaps);
-    const sums = path.join(ROOT(), 'summaries');
-    if (!fs.existsSync(sums)) fs.mkdirSync(sums);
+    const dirs = [
+      ROOT(),
+      path.join(ROOT(), 'snapshots'),
+      path.join(ROOT(), 'summaries')
+    ];
+    dirs.forEach(d => {
+      if (!fs.existsSync(d)) {
+        fs.mkdirSync(d, { recursive: true });
+      }
+    });
   }
 };

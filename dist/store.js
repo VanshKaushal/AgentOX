@@ -38,13 +38,15 @@ exports.store = {
         return lines.slice(-last).map(l => JSON.parse(l));
     },
     ensureDir() {
-        if (!fs_1.default.existsSync(ROOT()))
-            fs_1.default.mkdirSync(ROOT(), { recursive: true });
-        const snaps = path_1.default.join(ROOT(), 'snapshots');
-        if (!fs_1.default.existsSync(snaps))
-            fs_1.default.mkdirSync(snaps);
-        const sums = path_1.default.join(ROOT(), 'summaries');
-        if (!fs_1.default.existsSync(sums))
-            fs_1.default.mkdirSync(sums);
+        const dirs = [
+            ROOT(),
+            path_1.default.join(ROOT(), 'snapshots'),
+            path_1.default.join(ROOT(), 'summaries')
+        ];
+        dirs.forEach(d => {
+            if (!fs_1.default.existsSync(d)) {
+                fs_1.default.mkdirSync(d, { recursive: true });
+            }
+        });
     }
 };
