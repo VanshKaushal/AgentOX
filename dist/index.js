@@ -16,8 +16,9 @@ const checkpoint_1 = require("./commands/checkpoint");
 const serve_1 = require("./commands/serve");
 const objective_1 = require("./commands/objective");
 // more imports added by later prompts
+const pkg = require('../package.json');
 const program = new commander_1.Command();
-program.name('agentox').description('Cross-agent continuity layer').version('0.1.1');
+program.name('agentox').description('Cross-agent continuity layer').version(pkg.version);
 program.addCommand((0, init_1.initCmd)());
 program.addCommand((0, log_commit_1.logCommitCmd)());
 program.addCommand((0, log_commit_1.logPublicCmd)());

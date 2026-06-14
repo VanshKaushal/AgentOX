@@ -15,8 +15,9 @@ import { serveCmd } from './commands/serve';
 import { objectiveCmd } from './commands/objective';
 // more imports added by later prompts
 
+const pkg = require('../package.json');
 const program = new Command();
-program.name('agentox').description('Cross-agent continuity layer').version('0.1.1');
+program.name('agentox').description('Cross-agent continuity layer').version(pkg.version);
 program.addCommand(initCmd());
 program.addCommand(logCommitCmd());
 program.addCommand(logPublicCmd());

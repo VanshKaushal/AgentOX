@@ -12,7 +12,7 @@ import path from 'path';
 import fs from 'fs';
 
 const server = new Server(
-  { name: 'agentox', version: '0.1.1' },
+  { name: 'agentox', version: require('../../package.json').version },
   { capabilities: { tools: {} } }
 );
 

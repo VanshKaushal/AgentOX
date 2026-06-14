@@ -1,7 +1,37 @@
 import { Command } from 'commander';
 import { store } from '../store';
 import { getWrapped } from '../templates';
-import clipboard from 'clipboardy';
+
+function copyToClipboard(text: string): boolean {
+  const { execSync } = require('child_process');
+  try {
+    if (process.platform === 'win32') {
+      // Windows — pipe to clip.exe (built-in)
+      const { spawnSync } = require('child_process');
+      const proc = spawnSync('clip', [], { 
+        input: text, 
+        encoding: 'utf8',
+        shell: false 
+      });
+      return proc.status === 0;
+    } else if (process.platform === 'darwin') {
+      // Mac — pbcopy (built-in)
+      execSync('pbcopy', { input: text });
+      return true;
+    } else {
+      // Linux — xclip or xsel
+      try {
+        execSync('xclip -selection clipboard', { input: text });
+        return true;
+      } catch {
+        execSync('xsel --clipboard --input', { input: text });
+        return true;
+      }
+    }
+  } catch {
+    return false;
+  }
+}
 
 export function switchCmd(): Command {
   return new Command('switch')
@@ -19,11 +49,11 @@ export function switchCmd(): Command {
       const prompt = getWrapped(agent);
 
       // Copy to clipboard
-      try {
-        await clipboard.write(prompt);
+      const copied = copyToClipboard(prompt);
+      if (copied) {
         console.log('✓ Bootstrap prompt copied to clipboard');
-      } catch {
-        console.log('(clipboard unavailable — prompt printed below)');
+      } else {
+        console.log('(clipboard unavailable — see prompt below)');
       }
 
       // Update active agent

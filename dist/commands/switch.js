@@ -1,13 +1,43 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.switchCmd = switchCmd;
 const commander_1 = require("commander");
 const store_1 = require("../store");
 const templates_1 = require("../templates");
-const clipboardy_1 = __importDefault(require("clipboardy"));
+function copyToClipboard(text) {
+    const { execSync } = require('child_process');
+    try {
+        if (process.platform === 'win32') {
+            // Windows — pipe to clip.exe (built-in)
+            const { spawnSync } = require('child_process');
+            const proc = spawnSync('clip', [], {
+                input: text,
+                encoding: 'utf8',
+                shell: false
+            });
+            return proc.status === 0;
+        }
+        else if (process.platform === 'darwin') {
+            // Mac — pbcopy (built-in)
+            execSync('pbcopy', { input: text });
+            return true;
+        }
+        else {
+            // Linux — xclip or xsel
+            try {
+                execSync('xclip -selection clipboard', { input: text });
+                return true;
+            }
+            catch {
+                execSync('xsel --clipboard --input', { input: text });
+                return true;
+            }
+        }
+    }
+    catch {
+        return false;
+    }
+}
 function switchCmd() {
     return new commander_1.Command('switch')
         .description('Generate bootstrap prompt for new agent and copy to clipboard')
@@ -27,12 +57,12 @@ function switchCmd() {
         catch { }
         const prompt = (0, templates_1.getWrapped)(agent);
         // Copy to clipboard
-        try {
-            await clipboardy_1.default.write(prompt);
+        const copied = copyToClipboard(prompt);
+        if (copied) {
             console.log('✓ Bootstrap prompt copied to clipboard');
         }
-        catch {
-            console.log('(clipboard unavailable — prompt printed below)');
+        else {
+            console.log('(clipboard unavailable — see prompt below)');
         }
         // Update active agent
         const state = store_1.store.readState();

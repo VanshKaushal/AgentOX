@@ -13,7 +13,7 @@ const audit_1 = require("../audit");
 const crypto_1 = __importDefault(require("crypto"));
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
-const server = new index_js_1.Server({ name: 'agentox', version: '0.1.1' }, { capabilities: { tools: {} } });
+const server = new index_js_1.Server({ name: 'agentox', version: require('../../package.json').version }, { capabilities: { tools: {} } });
 server.setRequestHandler(types_js_1.ListToolsRequestSchema, async () => ({
     tools: [
         {
