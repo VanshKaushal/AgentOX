@@ -1,7 +1,7 @@
 {
-  "active_agent": "none",
-  "session_start": "2026-06-14T01:36:03.173Z",
-  "objective": "Not set — run: agentox objective \"your goal\"",
+  "active_agent": "claude",
+  "session_start": "2026-06-14T01:45:01.977Z",
+  "objective": "test project",
   "pending_tasks": [],
   "drift_score": 0,
   "fingerprint": "",

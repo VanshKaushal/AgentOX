@@ -1,5 +1,7 @@
 {
-  "pending": [],
+  "pending": [
+    "build auth module"
+  ],
   "in_progress": [],
   "completed": []
 }
