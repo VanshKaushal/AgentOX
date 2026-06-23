@@ -1,162 +1,396 @@
 <div align="center">
-  <h1>🤖 AgentOS</h1>
-  <p><b>Cross-Agent Continuity Layer for AI Coding Assistants</b></p>
-
-  [![npm version](https://badge.fury.io/js/agentox.svg)](https://badge.fury.io/js/agentox)
-  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/agentox-hero.svg">
+  <source media="(prefers-color-scheme: light)" srcset="./assets/agentox-hero.svg">
+  <img alt="AgentOX — Cross-Agent Continuity Layer" src="./assets/agentox-hero.svg" width="100%">
+</picture>
+<br />
+🤖 AgentOX
+Cross-Agent Continuity Layer for AI Coding Assistants
+Stop losing context when switching between Cursor, Claude Code, Aider, OpenCode, Windsurf, Antigravity, VS Code, and ChatGPT.
+<br />
+![npm version](https://badge.fury.io/js/agentox.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-blue)
+![CLI](https://img.shields.io/badge/CLI-AgentOX-8A2BE2)
+![MCP](https://img.shields.io/badge/MCP-supported-brightgreen)
+![AI Agents](https://img.shields.io/badge/AI%20Agents-Cursor%20%7C%20Claude%20%7C%20Aider%20%7C%20OpenCode-black)
+<br />
+<a href="#-quick-start">Quick Start</a>
+ • 
+<a href="#-how-agentox-works">How It Works</a>
+ • 
+<a href="#-commands">Commands</a>
+ • 
+<a href="#-ide-compatibility">IDE Support</a>
+ • 
+<a href="#-contributing">Contribute</a>
 </div>
-
 ---
-
-## 🚀 The Problem
-
-When you work with AI coding assistants (like Cursor, Claude Engineer, Aider, OpenCode), they lack **shared context**. Switching from one agent to another means losing your current tasks, architectural decisions, recent changes, and state.
-
-## 🌟 What is AgentOS?
-
-**AgentOS** is a continuity layer designed to seamlessly bridge the gap between different AI assistants. It creates a robust, file-based memory layer (`agentos/`) directly in your project repository. 
-
-Whenever you switch assistants, AgentOS generates a highly-condensed **bootstrap handoff prompt** containing:
-- Pending Tasks
-- Hard Architectural Decisions
-- Recent History & Git changes
-- Architecture Mapping
-
-Your next AI agent can immediately pick up where the last one left off!
-
+🚀 The Problem
+AI coding agents are powerful, but they are bad at continuity.
+You start building in Cursor.  
+Then you move to Claude Code.  
+Then you test something in Aider.  
+Then you open the repo in Windsurf.
+Every switch creates the same problem:
+> The new agent does not know your current tasks, architecture decisions, recent changes, blockers, file structure, or what the previous agent was trying to do.
+That means you waste time re-explaining context instead of building.
 ---
-
-## ⚡ Features
-
-- **🧠 Shared Memory State**: Maintain task lists, goals, and architectural decisions across sessions.
-- **🔄 Seamless Handoffs**: Automatically generate a "bootstrap" prompt for your next AI agent via `agentox switch <agent>`.
-- **📸 Intelligent Snapshots**: Take snapshots of your workspace before handing it over to another agent.
-- **🛡️ Hard Decisions**: Enforce architectural guidelines that AI agents are strictly instructed *not* to override (`--hard`).
-- **🔗 Git Integration**: Automatically logs AI agent activity into the execution log on every `git commit`.
-
+🌟 What is AgentOX?
+AgentOX is a file-based continuity layer for AI coding assistants.
+It creates a project-local memory system inside your repository:
+```txt
+.agentos/
+├── state.json
+├── decisions.json
+├── task_graph.json
+├── execution_log.jsonl
+├── architecture_map.json
+└── snapshots/
+```
+This memory layer stores:
+Context Type	What AgentOX Tracks
+✅ Tasks	Pending, completed, and active work
+✅ Decisions	Architectural rules, hard constraints, stack choices
+✅ History	Recent actions, commits, switches, and execution logs
+✅ Snapshots	Workspace state before handing off to another agent
+✅ Architecture	Project structure, important files, and system map
+✅ Bootstrap Prompt	Condensed handoff prompt for the next AI assistant
+When you switch agents, AgentOX generates a compact handoff prompt so the next assistant can continue from the same state.
 ---
+✨ Why AgentOX Exists
+Most AI coding tools act like isolated brains.
+AgentOX gives them a shared memory layer.
+```mermaid
+flowchart LR
+    A[Cursor] --> M[(.agentos Memory)]
+    B[Claude Code] --> M
+    C[Aider] --> M
+    D[OpenCode] --> M
+    E[Windsurf] --> M
+    F[ChatGPT] --> M
 
-## 🛠️ Installation
-
-### New in v0.2.0
-- Zero-git file watching
-- Works on cloned repos  
-- VSCode/Cursor/Windsurf extension
-- Auto-starts on folder open
-- One-click agent switch
-
-**Install CLI:**
+    M --> T[Tasks]
+    M --> D2[Decisions]
+    M --> H[History]
+    M --> S[Snapshots]
+    M --> P[Bootstrap Prompt]
+```
+---
+⚡ Quick Start
+1. Install the CLI
 ```bash
 npm install -g agentox
 ```
-
-**Install Extension:**
-Search for "AgentOX" in your IDE's extension marketplace and install it.
-
-## IDE Compatibility
-
-| IDE / Tool | MCP Auto | Bootstrap Fallback |
-|------------|----------|--------------------|
-| Claude Code | ✅ Native | ✅ |
-| Cursor | ✅ Native | ✅ |
-| Windsurf | ✅ Native | ✅ |
-| Antigravity | ✅ (via MCP config) | ✅ |
-| VS Code + Copilot | ❌ (needs Cline/RooCode) | ✅ |
-| ChatGPT | ❌ | ✅ |
-| Any other AI | ❌ | ✅ |
-
-**AgentOX works everywhere via Bootstrap fallback.
-MCP gives you zero-paste automation in supported IDEs.**
-
----
-
-## 📚 Quick Start
-
-### 1. Initialize AgentOS in your project
-
-Navigate to your existing project repository and run:
-
+2. Initialize AgentOX inside your project
 ```bash
 agentox init
 ```
-*This creates the `.agentos/` directory and sets up the continuity layer, including a Git post-commit hook for tracking changes.*
-
-### 2. Set your current Agent
-
+This creates the `.agentos/` memory directory.
+3. Set your current agent
 ```bash
-agentox use claude
+agentox use cursor
 ```
-*(Options: claude, cursor, aider, opencode)*
-
-### 3. Track Tasks and Decisions
-
+Supported agents:
 ```bash
-# Add pending tasks
-agentox task add "Build the login authentication flow"
-agentox task add "Setup PostgreSQL database"
+claude
+cursor
+aider
+opencode
+windsurf
+antigravity
+chatgpt
+```
+4. Add tasks
+```bash
+agentox task add "Build login authentication flow"
+agentox task add "Set up PostgreSQL database"
+agentox task add "Fix failing test runner"
+```
+5. Add hard architectural decisions
+```bash
+agentox decision add "Use React functional components only" --hard
+agentox decision add "Do not replace FastAPI with Express" --hard
+agentox decision add "Keep database access inside service layer" --hard
+```
+6. Switch to another agent
+```bash
+agentox switch claude
+```
+AgentOX will:
+Capture a fresh snapshot
+Update execution history
+Generate a bootstrap handoff prompt
+Copy the prompt to your clipboard
+Set the new active agent
+---
+🧠 How AgentOX Works
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant CLI as AgentOX CLI
+    participant Memory as .agentos/
+    participant AgentA as Current AI Agent
+    participant AgentB as Next AI Agent
 
-# Mark a task as done
+    Dev->>CLI: agentox switch claude
+    CLI->>Memory: Save snapshot
+    CLI->>Memory: Read tasks, decisions, logs
+    CLI->>Memory: Generate bootstrap prompt
+    CLI->>AgentB: Paste handoff prompt
+    AgentB->>Memory: Continue from project state
+```
+---
+🧩 What Gets Preserved?
+✅ Pending Tasks
+```bash
+agentox task add "Refactor authentication middleware"
+agentox task add "Add GitHub webhook receiver"
+agentox task add "Fix Redis worker retry logic"
+```
+✅ Hard Decisions
+```bash
+agentox decision add "Never bypass service layer for DB writes" --hard
+```
+✅ Recent Git Activity
+AgentOX can track commits through the post-commit hook created during initialization.
+```bash
+git commit -m "Add webhook handler"
+```
+AgentOX records the commit in the execution log.
+✅ Bootstrap Handoff Prompt
+Example output:
+```txt
+━━━ AgentOX Continuity Handoff ━━━
+
+Previous agent: cursor
+Incoming agent: claude
+
+Current goal:
+- Finish GitHub PR review pipeline
+
+Pending tasks:
+1. Implement webhook signature validation
+2. Add retry logic for failed LLM review calls
+3. Store review results in database
+
+Hard decisions:
+- Do not replace FastAPI backend
+- Keep Celery for async jobs
+- Use Redis as queue/cache layer
+
+Recent changes:
+- Added /api/v1/analyze endpoint
+- Created worker queue structure
+- Added repository language detection
+
+Next best action:
+Start with webhook signature validation.
+```
+---
+🖥️ IDE Compatibility
+IDE / Tool	MCP Automation	Bootstrap Fallback	Best Use Case
+Claude Code	✅ Native	✅	Deep implementation, refactors
+Cursor	✅ Native	✅	IDE coding, repo navigation
+Windsurf	✅ Native	✅	Agentic coding flows
+Antigravity	✅ via MCP config	✅	Multi-agent workflows
+Aider	⚠️ Manual/CLI	✅	Git-based coding tasks
+OpenCode	⚠️ Manual/CLI	✅	Terminal-first coding
+VS Code + Copilot	❌ Needs Cline/RooCode	✅	Lightweight fallback
+ChatGPT	❌	✅	Planning, review, debugging
+Any other AI	❌	✅	Paste bootstrap prompt
+> AgentOX works everywhere through Bootstrap fallback.  
+> MCP gives zero-paste automation in supported IDEs.
+---
+🧰 Commands
+<details>
+<summary><b>Core Commands</b></summary>
+Command	Description
+`agentox init`	Initialize AgentOX in the current repository
+`agentox status`	Show active agent, tasks, decisions, and drift
+`agentox use <agent>`	Set active agent without generating handoff
+`agentox switch <agent>`	Snapshot state and generate handoff prompt
+`agentox repair`	Validate and repair corrupted `.agentos/` files
+</details>
+<details>
+<summary><b>Task Commands</b></summary>
+Command	Description
+`agentox task add "<task>"`	Add a new pending task
+`agentox task list`	Show all tasks
+`agentox task done <id>`	Mark task as complete
+Example:
+```bash
+agentox task add "Add OAuth login"
+agentox task list
 agentox task done 1
-
-# Enforce an architectural decision
-agentox decision add "Use strictly React and functional components" --hard
 ```
-
-### 4. Switch to a new Agent
-
-If you want to move from your current IDE/agent to another (e.g., from Cursor to Claude), use:
-
+</details>
+<details>
+<summary><b>Decision Commands</b></summary>
+Command	Description
+`agentox decision add "<decision>"`	Add an architectural decision
+`agentox decision add "<decision>" --hard`	Add a non-negotiable decision
+`agentox decision list`	Show all decisions
+Example:
 ```bash
-agentox switch cursor
+agentox decision add "Use PostgreSQL for persistent storage" --hard
 ```
-*This command auto-saves a snapshot, generates a Bootstrap Prompt, copies it to your clipboard, and sets the active agent.*
-
-### 5. Check Status
-
+</details>
+<details>
+<summary><b>Snapshot Commands</b></summary>
+Command	Description
+`agentox snapshot`	Capture current workspace state
+`agentox rollback`	Restore from a previous snapshot
+</details>
+<details>
+<summary><b>Git Integration</b></summary>
+Command	Description
+`agentox log-commit`	Log git commit into AgentOX history
+Usually this is triggered automatically by the Git post-commit hook.
+</details>
+---
+📦 Installation Options
+CLI
 ```bash
+npm install -g agentox
+```
+VS Code / Cursor / Windsurf Extension
+Search for:
+```txt
+AgentOX
+```
+Install the extension from your IDE marketplace.
+Verify Installation
+```bash
+agentox --version
 agentox status
 ```
-*Displays the current state, active agent, pending tasks, recent decisions, and file tree drift.*
-
 ---
+🧪 Example Workflow
+```bash
+# Start in Cursor
+agentox init
+agentox use cursor
 
-## 📖 Command Reference
+# Add current work
+agentox task add "Build repo analyzer dashboard"
+agentox decision add "Use FastAPI backend and React frontend" --hard
 
-| Command | Description |
-|---|---|
-| `agentox init` | Initializes AgentOS in the current repo, setting up state files and git hooks. |
-| `agentox status` | Displays the current agent status, tasks, and system state. |
-| `agentox use <agent>` | Sets the active agent without generating a handoff prompt. |
-| `agentox switch <agent>` | Snapshots state, generates a handoff prompt, copies it, and sets active agent. |
-| `agentox task add/done/list` | Manage your agent's pending and completed tasks. |
-| `agentox decision add/list` | Manage architectural decisions. Use `--hard` to make them strict for AI. |
-| `agentox snapshot` | Manually captures a snapshot of the workspace and state. |
-| `agentox rollback` | Reverts the workspace to a previous snapshot. |
-| `agentox log-commit` | Logs git commits to the execution history (used mainly by the auto-hook). |
-| `agentox repair` | Validates and fixes corrupted `.agentos/` JSON state files. |
+# Work for some time...
+git add .
+git commit -m "Add dashboard layout"
 
+# Switch to Claude Code
+agentox switch claude
+
+# Paste generated handoff prompt into Claude Code
+# Claude now understands the current project state
+```
 ---
-
-
-
-## 🤝 Contributing
-
-We welcome contributions to expand AgentOS to more platforms, improve the prompt templates, and enhance state tracking!
-1. Fork the repo.
-2. Clone it locally and run `npm install`.
-3. Create a feature branch: `git checkout -b feature/my-cool-idea`.
-4. Commit your changes: `git commit -m "Add cool idea"`.
-5. Push to the branch: `git push origin feature/my-cool-idea`.
-6. Open a Pull Request!
-
+🛡️ Hard Decisions
+Hard decisions are rules that future agents should not casually override.
+Example:
+```bash
+agentox decision add "Do not replace Celery with a custom queue" --hard
+```
+Use hard decisions for:
+Tech stack constraints
+Architecture boundaries
+Database choices
+Security rules
+Deployment assumptions
+Testing requirements
+Bad AI agents randomly rewrite architecture.  
+AgentOX makes those decisions explicit.
 ---
-
-## 📄 License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
+🔄 Bootstrap vs MCP
+Mode	How It Works	Best For
+Bootstrap	AgentOX generates a prompt you paste manually	Any AI assistant
+MCP	IDE/agent reads AgentOX state automatically	Claude Code, Cursor, Windsurf, Antigravity
+```mermaid
+flowchart TD
+    A[Need to switch agents?] --> B{Does new agent support MCP?}
+    B -->|Yes| C[Use MCP automation]
+    B -->|No| D[Use bootstrap prompt]
+    C --> E[Agent reads .agentos state]
+    D --> F[Paste handoff prompt]
+    E --> G[Continue work]
+    F --> G[Continue work]
+```
+---
+📁 Project Memory Layout
+```txt
+.agentos/
+├── state.json              # Active agent and current state
+├── task_graph.json         # Pending/completed task graph
+├── decisions.json          # Architectural decisions
+├── execution_log.jsonl     # Timeline of agent actions
+├── architecture_map.json   # Project structure summary
+└── snapshots/              # Workspace snapshots
+```
+---
+🧭 Use Cases
+Use Case	Why AgentOX Helps
+Switching from Cursor to Claude Code	Claude gets exact project context instantly
+Moving from ChatGPT planning to IDE coding	IDE agent receives implementation-ready context
+Large refactors	Hard decisions prevent architecture drift
+Hackathon projects	Team members can hand off repo state cleanly
+Multi-agent workflows	Every agent reads the same continuity layer
+Long-running coding sessions	No need to re-explain the project every time
+---
+🧱 Roadmap
+[ ] Rich visual timeline for agent activity
+[ ] Better automatic architecture map generation
+[ ] More IDE extension support
+[ ] Deeper MCP integration
+[ ] Team-based shared continuity mode
+[ ] Agent performance analytics
+[ ] Snapshot diff viewer
+[ ] Better rollback preview
+---
+🤝 Contributing
+Contributions are welcome.
+Local Setup
+```bash
+git clone https://github.com/YOUR_USERNAME/agentox.git
+cd agentox
+npm install
+```
+Create a Branch
+```bash
+git checkout -b feature/my-feature
+```
+Commit and Push
+```bash
+git add .
+git commit -m "Add my feature"
+git push origin feature/my-feature
+```
+Then open a pull request.
+Good contribution areas:
+More AI agent integrations
+Better handoff prompt templates
+Extension improvements
+Snapshot reliability
+MCP automation
+Documentation examples
+---
+📄 License
+AgentOX is licensed under the MIT License.
+See LICENSE for details.
 ---
 <div align="center">
-<i>Built to make AI Pair Programming seamless across any tool.</i>
+Built for developers who switch tools but do not want to lose momentum.
+<br />
+Install AgentOX
+```bash
+npm install -g agentox
+```
+<br />
+<a href="#-quick-start">Get Started</a>
+ • 
+<a href="#-commands">Commands</a>
+ • 
+<a href="#-contributing">Contribute</a>
 </div>
