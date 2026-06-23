@@ -1,6 +1,9 @@
 {
   "pending": [
-    "build auth module"
+    "build auth module",
+    "build login",
+    "add auth",
+    "new task from CLI"
   ],
   "in_progress": [],
   "completed": []

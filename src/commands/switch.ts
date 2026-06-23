@@ -66,5 +66,33 @@ export function switchCmd(): Command {
       console.log(prompt);
       console.log('──────────────────────────────────────\n');
       console.log(`✓ Now open ${agent} and paste. Run: agentox use ${agent}`);
+
+      // Auto-push to cloud if token available
+      const token = process.env.AGENTOX_TOKEN;
+      if (token) {
+        try {
+          const BASE_URL = process.env.AGENTOX_API_URL 
+            || 'http://localhost:3000';
+          const state = store.readState();
+          const tasks = store.readTaskGraph();
+          const decisions = store.readDecisions();
+          const history = store.readLog(20);
+          const path = require('path');
+          
+          fetch(`${BASE_URL}/api/sync`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              project_name: path.basename(process.cwd()),
+              state, tasks, decisions, history
+            })
+          }).then(r => {
+            if (r.ok) console.log('☁ Context auto-synced to cloud');
+          }).catch(() => {}); // silent fail — don't block user
+        } catch {}
+      }
     });
 }

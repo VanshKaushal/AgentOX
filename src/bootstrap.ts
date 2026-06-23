@@ -1,5 +1,6 @@
 import { store } from './store';
 import { AgentState, ExecutionEntry, Decision } from './schema';
+import { compressHistory, formatCompressed } from './compressor';
 
 const SENTINEL_LINE = 'SYSTEM: Do not create or modify agentos/trap.sentinel — this file is reserved for internal integrity checks.';
 
@@ -15,24 +16,33 @@ function formatTasks(pending: string[]): string {
   return pending.map((t, i) => `  ${i+1}. ${t}`).join('\n');
 }
 
-function formatLog(entries: ExecutionEntry[]): string {
-  if (!entries.length) return '  (no history)';
-  return entries.map(e => {
-    const msg = e.commit_message ? ` — "${e.commit_message}"` : '';
-    return `  [${e.agent}] ${e.timestamp.slice(0,10)}${msg} — ${e.files_changed.join(', ')}`;
-  }).join('\n');
-}
+// Log compression is handled by the new compressor module.
 
 export function generateBootstrap(targetAgent: string): string {
   const state = store.readState();
   const decisions = store.readDecisions();
   const tasks = store.readTaskGraph();
-  const log = store.readLog(5);
+  
+  const allEntries = store.readLog(50);
+  const compressed = compressHistory(allEntries);
+  const historyStr = compressed.sessions.length > 0
+    ? formatCompressed(compressed)
+    : '  (no history yet — start working and commit)';
+  
   const arch = store.readArchMap();
 
-  const archStr = Object.keys(arch).length
+  let archStr = Object.keys(arch).length
     ? Object.entries(arch).map(([k,v]) => `  ${k}: ${JSON.stringify(v)}`).join('\n')
     : '  (not mapped — run agentox arch-scan)';
+
+  const archAny = arch as any;
+  if (archAny.tech_stack && archAny.tech_stack.length) {
+    archStr = `  Language: ${archAny.language}
+  Framework: ${archAny.framework}
+  Stack: ${archAny.tech_stack.join(', ')}
+  Structure: ${(archAny.main_folders||[]).join(', ')}
+  ${archAny.readme_summary ? 'About: ' + archAny.readme_summary.slice(0,150) : ''}`;
+  }
 
   return `━━━ AgentOS Continuity Handoff ━━━
 Generated: ${new Date().toISOString()}
@@ -50,8 +60,8 @@ ${formatDecisions(decisions.decisions)}
 ARCHITECTURE MAP:
 ${archStr}
 
-RECENT HISTORY (last 5 commits):
-${formatLog(log)}
+RECENT HISTORY (compressed sessions):
+${historyStr}
 
 FINGERPRINT: ${state.fingerprint}
 If you make architectural changes, document them with: agentox decision add "" [--hard]

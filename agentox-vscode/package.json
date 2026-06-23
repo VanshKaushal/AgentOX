@@ -1,0 +1,59 @@
+{
+  "name": "agentox",
+  "displayName": "AgentOX",
+  "description": "Zero-command AI agent context continuity",
+  "version": "0.1.0",
+  "publisher": "VanshKaushal",
+  "engines": { "vscode": "^1.85.0" },
+  "categories": ["Other","AI"],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {"command":"agentox.switchAgent","title":"AgentOX: Switch Agent"},
+      {"command":"agentox.setObjective","title":"AgentOX: Set Objective"},
+      {"command":"agentox.addTask","title":"AgentOX: Add Task"},
+      {"command":"agentox.viewStatus","title":"AgentOX: View Status"},
+      {"command":"agentox.openDashboard","title":"AgentOX: Open Dashboard"},
+      {"command":"agentox.copyContext","title":"AgentOX: Copy Context to Clipboard"},
+      {"command":"agentox.initProject","title":"AgentOX: Initialize Project"}
+    ],
+    "views": {
+      "explorer": [{
+        "id": "agentoxPanel",
+        "name": "AgentOX"
+      }]
+    },
+    "configuration": {
+      "title": "AgentOX",
+      "properties": {
+        "agentox.autoWatch": {
+          "type": "boolean",
+          "default": true,
+          "description": "Auto-watch files on folder open"
+        },
+        "agentox.debounceMs": {
+          "type": "number", 
+          "default": 4000,
+          "description": "File change debounce in ms"
+        },
+        "agentox.currentAgent": {
+          "type": "string",
+          "default": "none",
+          "description": "Current active AI agent"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "esbuild src/extension.ts --bundle --platform=node --outfile=dist/extension.js --external:vscode",
+    "watch": "npm run build -- --watch"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "esbuild": "^0.20.0",
+    "typescript": "^5.4.0"
+  }
+}

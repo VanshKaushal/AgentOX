@@ -1,58 +1,55 @@
 import { Command } from 'commander';
+import { FileWatcher } from '../watchers/file-watcher';
+import { store } from '../store';
 import fs from 'fs';
 import path from 'path';
-import { execSync } from 'child_process';
+import { scanRepo } from '../scanners/repo-scanner';
 
 export function watchCmd(): Command {
   return new Command('watch')
-    .description('Auto-log commits in background (no hook needed)')
-    .action(() => {
-      const gitDir = path.join(process.cwd(), '.git');
-      const headFile = path.join(gitDir, 'COMMIT_EDITMSG');
-      
-      if (!fs.existsSync(gitDir)) {
-        console.error('Not a git repo');
-        process.exit(1);
+    .description('Auto-track file changes (no git required)')
+    .option('--debounce <ms>', 'Debounce delay in ms', '4000')
+    .action((opts) => {
+      if (!store.exists()) {
+        console.log('📁 No AgentOX found. Auto-initializing...');
+        // Create dirs
+        const agentosDir = path.join(process.cwd(), 'agentos');
+        const dirs = [agentosDir, 
+          path.join(agentosDir,'snapshots'),
+          path.join(agentosDir,'summaries')];
+        dirs.forEach(d => { 
+          if (!fs.existsSync(d)) fs.mkdirSync(d,{recursive:true}); 
+        });
+        // Write defaults
+        const { defaultState, defaultDecisions, 
+                defaultTaskGraph, defaultArchMap } = require('../schema');
+        const statePath = path.join(agentosDir,'state.json');
+        const logPath = path.join(agentosDir,'execution_log.jsonl');
+        if (!fs.existsSync(statePath)) 
+          fs.writeFileSync(statePath, JSON.stringify(defaultState(),null,2));
+        if (!fs.existsSync(path.join(agentosDir,'decisions.json')))
+          fs.writeFileSync(path.join(agentosDir,'decisions.json'), 
+            JSON.stringify(defaultDecisions(),null,2));
+        if (!fs.existsSync(path.join(agentosDir,'task_graph.json')))
+          fs.writeFileSync(path.join(agentosDir,'task_graph.json'), 
+            JSON.stringify(defaultTaskGraph(),null,2));
+        
+        const repoCtx = scanRepo(process.cwd());
+        fs.writeFileSync(
+          path.join(agentosDir,'architecture_map.json'),
+          JSON.stringify(repoCtx, null, 2)
+        );
+        console.log(`✓ Detected: ${repoCtx.language} / ${repoCtx.framework}`);
+
+        if (!fs.existsSync(logPath)) 
+          fs.writeFileSync(logPath, '');
+        console.log('✓ AgentOX ready (run agentox init for full setup)\n');
       }
-
-      console.log('👁  AgentOS watching for commits...');
-      console.log('   Every commit will be auto-logged.');
-      console.log('   Press Ctrl+C to stop.\n');
-
-      let lastContent = '';
-      try {
-        lastContent = fs.readFileSync(headFile, 'utf8');
-      } catch {}
-
-      // Watch COMMIT_EDITMSG — changes on every commit
-      fs.watch(gitDir, { recursive: false }, (event, filename) => {
-        if (filename !== 'COMMIT_EDITMSG') return;
-        try {
-          const content = fs.readFileSync(headFile, 'utf8');
-          if (content === lastContent) return;
-          lastContent = content;
-          
-          // Small delay to ensure commit is complete
-          setTimeout(() => {
-            try {
-              execSync('agentox _log-commit', {
-                cwd: process.cwd(),
-                stdio: 'pipe'
-              });
-              const msg = content.trim().slice(0, 50);
-              console.log(`✓ Auto-logged: "${msg}"`);
-            } catch (e) {
-              console.log('⚠ Auto-log failed:', (e as Error).message);
-            }
-          }, 500);
-        } catch {}
-      });
-
-      // Keep process alive
+      const debounce = parseInt(opts.debounce) || 4000;
+      const watcher = new FileWatcher(process.cwd(), debounce);
+      watcher.start();
       process.stdin.resume();
-      process.on('SIGINT', () => {
-        console.log('\n✓ AgentOS watch stopped.');
-        process.exit(0);
-      });
+      process.on('SIGINT', () => { watcher.stop(); process.exit(0); });
+      process.on('SIGTERM', () => { watcher.stop(); process.exit(0); });
     });
 }

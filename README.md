@@ -39,11 +39,20 @@ Your next AI agent can immediately pick up where the last one left off!
 
 ## 🛠️ Installation
 
-AgentOS is built with Node.js and TypeScript. You can install it globally via npm:
+### New in v0.2.0
+- Zero-git file watching
+- Works on cloned repos  
+- VSCode/Cursor/Windsurf extension
+- Auto-starts on folder open
+- One-click agent switch
 
+**Install CLI:**
 ```bash
 npm install -g agentox
 ```
+
+**Install Extension:**
+Search for "AgentOX" in your IDE's extension marketplace and install it.
 
 ## IDE Compatibility
 
@@ -129,31 +138,7 @@ agentox status
 
 ---
 
-## ⚙️ Architecture & Data Structure
 
-AgentOS operates completely locally, saving data into a hidden `agentos/` directory in your root folder. This ensures memory travels with the repository.
-
-```mermaid
-graph TD;
-    A[User / Dev] -->|Runs CLI| B(AgentOS Core);
-    B --> C{agentos/};
-    C -->|state.json| D[Active Agent & Goal];
-    C -->|decisions.json| E[Arch Decisions];
-    C -->|task_graph.json| F[Pending Tasks];
-    C -->|execution_log.jsonl| G[Commit History];
-    
-    B -->|agentox switch| H[Bootstrap Prompt];
-    H --> I[Claude / Cursor / Aider];
-    I -->|Reads/Applies Context| J[Codebase];
-```
-
-The system uses:
-- **`state.json`**: Current active agent, drift score, and session details.
-- **`task_graph.json`**: A directed array of pending and completed tasks.
-- **`decisions.json`**: A history of architectural guidelines (`overridable` or `hard`).
-- **`execution_log.jsonl`**: A stream of commit histories mapping what the agents have built.
-
----
 
 ## 🤝 Contributing
 

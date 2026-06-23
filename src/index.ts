@@ -13,7 +13,8 @@ import { reportCmd } from './commands/report';
 import { checkpointCmd } from './commands/checkpoint';
 import { serveCmd } from './commands/serve';
 import { objectiveCmd } from './commands/objective';
-// more imports added by later prompts
+import { pushCmd } from './commands/push';
+import { pullCmd } from './commands/cloud-pull';
 
 const pkg = require('../package.json');
 const program = new Command();
@@ -35,4 +36,6 @@ program.addCommand(objectiveCmd());
 import { watchCmd } from './commands/watch';
 // more commands added by later prompts
 program.addCommand(watchCmd());
+program.addCommand(pushCmd());
+program.addCommand(pullCmd());
 program.parse();

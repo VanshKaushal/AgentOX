@@ -1,9 +1,9 @@
 {
-  "active_agent": "claude",
-  "session_start": "2026-06-14T01:45:01.977Z",
-  "objective": "test project",
+  "active_agent": "none",
+  "session_start": "2026-06-21T19:10:54.790Z",
+  "objective": "test everything",
   "pending_tasks": [],
   "drift_score": 0,
-  "fingerprint": "",
+  "fingerprint": "a3891703af4b",
   "version": "0.1.0"
 }

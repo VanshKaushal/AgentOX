@@ -1,35 +1,83 @@
-Read src/commands/init.ts ONLY.
+Read src/commands/push.ts and src/commands/cloud-pull.ts
 
-The store.ensureDir() call is broken/unreliable.
-Replace it with inline directory creation directly 
-in init.ts action() — do not rely on store.ensureDir().
+━━━ FIX 1: Environment-based URL ━━━
 
-Replace the line:
-  store.ensureDir();
+Replace hardcoded localhost URL in push.ts:
+const BASE_URL = process.env.AGENTOX_API_URL 
+  || 'http://localhost:3000';
 
-With these lines:
+const res = await fetch(`${BASE_URL}/api/sync`, {
+  ...
+});
 
-const agentosDir = path.join(process.cwd(), 'agentos');
-const snapshotsDir = path.join(agentosDir, 'snapshots');
-const summariesDir = path.join(agentosDir, 'summaries');
+Same fix in cloud-pull.ts:
+const BASE_URL = process.env.AGENTOX_API_URL 
+  || 'http://localhost:3000';
 
-if (!fs.existsSync(agentosDir)) {
-  fs.mkdirSync(agentosDir, { recursive: true });
+const res = await fetch(
+  `${BASE_URL}/api/pull?project=${projectName}`,
+  ...
+);
+
+This means:
+Local testing: points to localhost:3000 (default)
+Production: set AGENTOX_API_URL=https://agentox.dev
+
+━━━ FIX 2: Auto-push on agentox snapshot ━━━
+
+Read src/commands/snapshot.ts
+
+At the END of the snapshot action(), after saving file:
+
+// Auto-push to cloud if token available
+const token = process.env.AGENTOX_TOKEN;
+if (token) {
+  try {
+    const BASE_URL = process.env.AGENTOX_API_URL 
+      || 'http://localhost:3000';
+    const state = store.readState();
+    const tasks = store.readTaskGraph();
+    const decisions = store.readDecisions();
+    const history = store.readLog(20);
+    const path = require('path');
+    
+    fetch(`${BASE_URL}/api/sync`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        project_name: path.basename(process.cwd()),
+        state, tasks, decisions, history
+      })
+    }).then(r => {
+      if (r.ok) console.log('☁ Context auto-synced to cloud');
+    }).catch(() => {}); // silent fail — don't block user
+  } catch {}
 }
-if (!fs.existsSync(snapshotsDir)) {
-  fs.mkdirSync(snapshotsDir, { recursive: true });
-}
-if (!fs.existsSync(summariesDir)) {
-  fs.mkdirSync(summariesDir, { recursive: true });
-}
 
-Do not change anything else in the file.
-Do not remove store.ensureDir() from store.ts.
-Just replace that one line in init.ts.
+This means: if AGENTOX_TOKEN is set,
+every agentox snapshot auto-pushes silently.
+No extra command needed.
 
-After: npm run build
+━━━ FIX 3: agentox switch also auto-pushes ━━━
 
-Verify:
-node dist/index.js init
-from inside a fresh folder with git init done.
-Must show zero ENOENT errors.
+Same block at end of switch.ts action().
+After generating bootstrap prompt, if token exists,
+auto-push silently.
+
+REBUILD: npm run build
+
+VERIFY:
+set AGENTOX_TOKEN=test_token
+# Start cloud: npm run dev in agentox-cloud/
+
+agentox snapshot
+# Must show: ☁ Context auto-synced to cloud
+
+agentox switch cursor  
+# Must show: ☁ Context auto-synced to cloud
+# (after the bootstrap prompt)
+
+No manual agentox push needed anymore.

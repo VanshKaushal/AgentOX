@@ -1,0 +1,166 @@
+{
+  "timestamp": "2026-06-21T18:33:41.247Z",
+  "state": {
+    "active_agent": "none",
+    "session_start": "2026-06-21T18:31:44.471Z",
+    "objective": "test everything",
+    "pending_tasks": [],
+    "drift_score": 0,
+    "fingerprint": "a3891703af4b",
+    "version": "0.1.0"
+  },
+  "decisions": {
+    "decisions": [
+      {
+        "decision": "React only",
+        "made_by": "claude",
+        "timestamp": "2026-06-21T12:19:11.646Z",
+        "reason": "Added via CLI",
+        "overridable": false
+      }
+    ]
+  },
+  "task_graph": {
+    "pending": [
+      "build auth module",
+      "build login",
+      "add auth",
+      "new task from CLI"
+    ],
+    "in_progress": [],
+    "completed": []
+  },
+  "arch_map": {},
+  "log_tail": [
+    {
+      "timestamp": "2026-06-09T14:53:54.787Z",
+      "agent": "antigravity",
+      "files_changed": [
+        "m.md"
+      ],
+      "commit_message": "test commit message",
+      "summary": "test commit message",
+      "accepted": true,
+      "session_id": "1ecdeddd-6e13-4609-baf1-a51fcccdc105"
+    },
+    {
+      "timestamp": "2026-06-10T15:45:12.720Z",
+      "agent": "cursor",
+      "files_changed": [
+        "m.md"
+      ],
+      "commit_message": "test commit message",
+      "summary": "test commit message",
+      "accepted": true,
+      "session_id": "fb99b987-57e5-477d-a929-496ec1e34dc4"
+    },
+    {
+      "timestamp": "2026-06-10T15:45:41.151Z",
+      "agent": "cursor",
+      "files_changed": [
+        "m.md"
+      ],
+      "commit_message": "test commit",
+      "summary": "test commit",
+      "accepted": true,
+      "session_id": "9866002d-d279-429c-b9e8-9e86e752b3af"
+    },
+    {
+      "timestamp": "2026-06-10T15:45:45.389Z",
+      "agent": "cursor",
+      "files_changed": [
+        "m.md"
+      ],
+      "commit_message": "test commit",
+      "summary": "test commit",
+      "accepted": true,
+      "session_id": "82904faa-2549-4ac0-8324-6c020300db4e"
+    },
+    {
+      "timestamp": "2026-06-10T18:41:50.580Z",
+      "agent": "cursor",
+      "files_changed": [
+        "test.txt"
+      ],
+      "commit_message": "test-auto-log",
+      "summary": "test-auto-log",
+      "accepted": true,
+      "session_id": "77a6aa81-196d-499e-8888-eaef8e11629a"
+    },
+    {
+      "timestamp": "2026-06-10T18:41:51.464Z",
+      "agent": "cursor",
+      "files_changed": [
+        "test.txt"
+      ],
+      "commit_message": "test-auto-log",
+      "summary": "test-auto-log",
+      "accepted": true,
+      "session_id": "2b801090-fb2a-400d-a88a-e74320595194"
+    },
+    {
+      "timestamp": "2026-06-10T18:41:52.179Z",
+      "agent": "cursor",
+      "files_changed": [
+        "test.txt"
+      ],
+      "commit_message": "test-auto-log",
+      "summary": "test-auto-log",
+      "accepted": true,
+      "session_id": "0369533a-1dd8-4d8c-8ba1-081641fbe977"
+    },
+    {
+      "timestamp": "2026-06-14T01:43:36.551Z",
+      "agent": "none",
+      "files_changed": [
+        ".claude/mcp.json",
+        ".cursor/mcp.json",
+        "ct5",
+        "m.md",
+        "package.json",
+        "src/commands/init.ts"
+      ],
+      "commit_message": "fix: inline dir creation in init.ts",
+      "summary": "fix: inline dir creation in init.ts",
+      "accepted": true,
+      "session_id": "d9795fc2-6edf-477e-827c-d9faee7efb3b"
+    },
+    {
+      "timestamp": "2026-06-14T01:45:07.589Z",
+      "agent": "claude",
+      "files_changed": [
+        "auth.ts",
+        "ct6"
+      ],
+      "commit_message": "add auth",
+      "summary": "add auth",
+      "accepted": true,
+      "session_id": "6ba2959d-505b-4cd9-8188-5d80364a5764"
+    },
+    {
+      "timestamp": "2026-06-21T18:33:22.711Z",
+      "agent": "none",
+      "files_changed": [
+        "agentox-cloud\\.next\\dev\\lock",
+        "agentox-cloud\\.next\\dev\\build-manifest.json",
+        "agentox-cloud\\.next\\dev\\logs\\next-development.log",
+        "agentox-cloud\\.next\\dev\\prerender-manifest.json",
+        "agentox-cloud\\.next\\dev\\server\\app-paths-manifest.json",
+        "agentox-cloud\\.next\\dev\\server\\middleware-build-manifest.js",
+        "agentox-cloud\\.next\\dev\\server\\middleware-manifest.json",
+        "agentox-cloud\\.next\\dev\\server\\middleware\\middleware-manifest.json",
+        "agentox-cloud\\.next\\dev\\server\\next-font-manifest.js",
+        "agentox-cloud\\.next\\dev\\server\\next-font-manifest.json",
+        "agentox-cloud\\next-env.d.ts",
+        "agentox-cloud\\.next\\dev\\cache\\turbopack\\f37fad94\\00000041.del",
+        "agentox-cloud\\.next\\dev\\server\\pages-manifest.json.tmp.gb3fcnr3c07",
+        "agentox-cloud\\.next\\dev\\server\\next-font-manifest.js.tmp.8knroc4dh4f",
+        "agentox-cloud\\.next\\dev\\server\\app-paths-manifest.json.tmp.t0cz0zpo44f"
+      ],
+      "summary": "IDE: 25 file(s) saved — agentox-cloud\\.next\\dev\\lock, agentox-cloud\\.next\\dev\\build-manifest.json, agentox-cloud\\.next\\dev\\logs\\next-development.log...",
+      "accepted": true,
+      "session_id": "feed704e-7176-4979-8292-86b2e4403850"
+    }
+  ],
+  "fingerprint": "a3891703af4b"
+}

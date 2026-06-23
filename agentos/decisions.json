@@ -1,3 +1,11 @@
 {
-  "decisions": []
+  "decisions": [
+    {
+      "decision": "React only",
+      "made_by": "claude",
+      "timestamp": "2026-06-21T12:19:11.646Z",
+      "reason": "Added via CLI",
+      "overridable": false
+    }
+  ]
 }

@@ -15,7 +15,8 @@ const report_1 = require("./commands/report");
 const checkpoint_1 = require("./commands/checkpoint");
 const serve_1 = require("./commands/serve");
 const objective_1 = require("./commands/objective");
-// more imports added by later prompts
+const push_1 = require("./commands/push");
+const cloud_pull_1 = require("./commands/cloud-pull");
 const pkg = require('../package.json');
 const program = new commander_1.Command();
 program.name('agentox').description('Cross-agent continuity layer').version(pkg.version);
@@ -36,4 +37,6 @@ program.addCommand((0, objective_1.objectiveCmd)());
 const watch_1 = require("./commands/watch");
 // more commands added by later prompts
 program.addCommand((0, watch_1.watchCmd)());
+program.addCommand((0, push_1.pushCmd)());
+program.addCommand((0, cloud_pull_1.pullCmd)());
 program.parse();
