@@ -20,7 +20,7 @@ export function activate(ctx: vscode.ExtensionContext) {
       const { execSync } = require('child_process');
       execSync('agentox init', { cwd: ws, stdio: 'ignore' });
       vscode.window.showInformationMessage('AgentOX initialized in the background.');
-    } catch(e) {
+    } catch (e) {
       // Ignore if agentox CLI isn't installed in PATH yet
     }
   }
@@ -47,6 +47,7 @@ export function activate(ctx: vscode.ExtensionContext) {
     vscode.commands.registerCommand('agentox.switchAgent', () => switchAgent(ws)),
     vscode.commands.registerCommand('agentox.setObjective', () => setObjective(ws)),
     vscode.commands.registerCommand('agentox.addTask', () => addTask(ws)),
+    vscode.commands.registerCommand('agentox.completeTask', (item) => completeTask(ws, item)),
     vscode.commands.registerCommand('agentox.viewStatus', () => viewStatus(ws)),
     vscode.commands.registerCommand('agentox.openDashboard', () => openDashboard(ctx)),
     vscode.commands.registerCommand('agentox.initProject', () => {
@@ -55,7 +56,7 @@ export function activate(ctx: vscode.ExtensionContext) {
         execSync('agentox init', { cwd: ws });
         vscode.window.showInformationMessage('✓ AgentOX successfully initialized!');
         provider?.refresh();
-      } catch(e) {
+      } catch (e) {
         vscode.window.showErrorMessage('Failed to initialize. Try running "agentox init" in terminal or install globally: npm install -g .');
       }
     }),
@@ -63,24 +64,24 @@ export function activate(ctx: vscode.ExtensionContext) {
       try {
         const { execSync } = require('child_process');
         // Generate bootstrap prompt
-        const result = execSync('agentox switch none', 
-          {cwd: ws, encoding:'utf8'});
-        
+        const result = execSync('agentox switch none',
+          { cwd: ws, encoding: 'utf8' });
+
         // Also copy to clipboard via extension API
         await vscode.env.clipboard.writeText(result);
-        
+
         // Show in new editor tab for visibility
         const doc = await vscode.workspace.openTextDocument({
           content: result,
           language: 'markdown'
         });
-        await vscode.window.showTextDocument(doc, 
+        await vscode.window.showTextDocument(doc,
           vscode.ViewColumn.Beside);
-        
+
         vscode.window.showInformationMessage(
           '✓ Context copied! Paste into any AI to continue.'
         );
-      } catch(e) {
+      } catch (e) {
         vscode.window.showErrorMessage('Failed: ' + e);
       }
     })
@@ -109,30 +110,30 @@ export function activate(ctx: vscode.ExtensionContext) {
 }
 
 async function switchAgent(ws: string) {
-  const agents = ['claude','cursor','windsurf','antigravity',
-    'opencode','aider','copilot','gemini','none'];
+  const agents = ['claude', 'cursor', 'windsurf', 'antigravity',
+    'opencode', 'aider', 'copilot', 'gemini', 'none'];
   const picked = await vscode.window.showQuickPick(agents, {
     placeHolder: 'Switch to which agent?'
   });
   if (!picked) return;
-  
+
   const { execSync } = require('child_process');
   try {
-    const result = execSync(`agentox switch ${picked}`, 
-      {cwd:ws, encoding:'utf8'});
-    
+    const result = execSync(`agentox switch ${picked}`,
+      { cwd: ws, encoding: 'utf8' });
+
     // Show prompt in new editor tab
     const doc = await vscode.workspace.openTextDocument({
       content: result, language: 'markdown'
     });
     await vscode.window.showTextDocument(doc);
-    
+
     vscode.window.showInformationMessage(
       `✓ Context copied! Paste in ${picked} to continue.`
     );
     provider?.refresh();
     statusBar?.update(picked, 0);
-  } catch(e) {
+  } catch (e) {
     vscode.window.showErrorMessage('AgentOX switch failed: ' + e);
   }
 }
@@ -144,7 +145,7 @@ async function setObjective(ws: string) {
   });
   if (!obj) return;
   const { execSync } = require('child_process');
-  execSync(`agentox objective "${obj}"`, {cwd:ws});
+  execSync(`agentox objective "${obj}"`, { cwd: ws });
   provider?.refresh();
   vscode.window.showInformationMessage(`✓ Objective set: "${obj}"`);
 }
@@ -156,15 +157,42 @@ async function addTask(ws: string) {
   });
   if (!task) return;
   const { execSync } = require('child_process');
-  execSync(`agentox task add "${task}"`, {cwd:ws});
+  execSync(`agentox task add "${task}"`, { cwd: ws });
   provider?.refresh();
   vscode.window.showInformationMessage(`✓ Task added: "${task}"`);
 }
 
+async function completeTask(ws: string, item?: any) {
+  const { execSync } = require('child_process');
+  
+  // If clicked from the inline UI button on a specific task
+  if (item && item.label) {
+    const match = item.label.match(/^(\d+)\./);
+    if (match) {
+      const idx = match[1];
+      execSync(`agentox task done ${idx}`, { cwd: ws });
+      provider?.refresh();
+      vscode.window.showInformationMessage(`✓ Task ${idx} completed!`);
+      return;
+    }
+  }
+
+  // Fallback: Called from Command Palette
+  const taskStr = await vscode.window.showInputBox({
+    prompt: 'Enter task number (e.g., 1) or text to complete',
+    placeHolder: '1'
+  });
+  if (!taskStr) return;
+  
+  execSync(`agentox task done "${taskStr}"`, { cwd: ws });
+  provider?.refresh();
+  vscode.window.showInformationMessage(`✓ Task completed!`);
+}
+
 function viewStatus(ws: string) {
   const { execSync } = require('child_process');
-  const out = execSync('agentox status', {cwd:ws, encoding:'utf8'});
-  vscode.window.showInformationMessage(out.slice(0,200));
+  const out = execSync('agentox status', { cwd: ws, encoding: 'utf8' });
+  vscode.window.showInformationMessage(out.slice(0, 200));
 }
 
 function openDashboard(ctx: vscode.ExtensionContext) {

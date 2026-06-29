@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>🤖 AgentOS</h1>
+  <h1>🤖 AgentOX</h1>
   <p><b>Cross-Agent Continuity Layer for AI Coding Assistants</b></p>
 
   [![npm version](https://badge.fury.io/js/agentox.svg)](https://badge.fury.io/js/agentox)
@@ -13,11 +13,11 @@
 
 When you work with AI coding assistants (like Cursor, Claude Engineer, Aider, OpenCode), they lack **shared context**. Switching from one agent to another means losing your current tasks, architectural decisions, recent changes, and state.
 
-## 🌟 What is AgentOS?
+## 🌟 What is AgentOX?
 
-**AgentOS** is a continuity layer designed to seamlessly bridge the gap between different AI assistants. It creates a robust, file-based memory layer (`agentos/`) directly in your project repository. 
+**AgentOX** is a continuity layer designed to seamlessly bridge the gap between different AI assistants. It creates a robust, file-based memory layer (`.agentos/`) directly in your project repository. 
 
-Whenever you switch assistants, AgentOS generates a highly-condensed **bootstrap handoff prompt** containing:
+Whenever you switch assistants, AgentOX generates a highly-condensed **bootstrap handoff prompt** containing:
 - Pending Tasks
 - Hard Architectural Decisions
 - Recent History & Git changes
@@ -73,7 +73,7 @@ MCP gives you zero-paste automation in supported IDEs.**
 
 ## 📚 Quick Start
 
-### 1. Initialize AgentOS in your project
+### 1. Initialize AgentOX in your project
 
 Navigate to your existing project repository and run:
 
@@ -125,7 +125,7 @@ agentox status
 
 | Command | Description |
 |---|---|
-| `agentox init` | Initializes AgentOS in the current repo, setting up state files and git hooks. |
+| `agentox init` | Initializes AgentOX in the current repo, setting up state files and git hooks. |
 | `agentox status` | Displays the current agent status, tasks, and system state. |
 | `agentox use <agent>` | Sets the active agent without generating a handoff prompt. |
 | `agentox switch <agent>` | Snapshots state, generates a handoff prompt, copies it, and sets active agent. |
@@ -142,7 +142,7 @@ agentox status
 
 ## 🤝 Contributing
 
-We welcome contributions to expand AgentOS to more platforms, improve the prompt templates, and enhance state tracking!
+We welcome contributions to expand AgentOX to more platforms, improve the prompt templates, and enhance state tracking!
 1. Fork the repo.
 2. Clone it locally and run `npm install`.
 3. Create a feature branch: `git checkout -b feature/my-cool-idea`.

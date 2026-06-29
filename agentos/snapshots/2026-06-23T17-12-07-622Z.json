@@ -1,0 +1,194 @@
+{
+  "timestamp": "2026-06-23T17:12:07.619Z",
+  "state": {
+    "active_agent": "none",
+    "session_start": "2026-06-21T19:10:54.790Z",
+    "objective": "test everything",
+    "pending_tasks": [],
+    "drift_score": 0,
+    "fingerprint": "b1173cec63c6",
+    "version": "0.1.0"
+  },
+  "decisions": {
+    "decisions": [
+      {
+        "decision": "React only",
+        "made_by": "claude",
+        "timestamp": "2026-06-21T12:19:11.646Z",
+        "reason": "Added via CLI",
+        "overridable": false
+      }
+    ]
+  },
+  "task_graph": {
+    "pending": [
+      "build auth module",
+      "build login",
+      "add auth",
+      "new task from CLI"
+    ],
+    "in_progress": [],
+    "completed": []
+  },
+  "arch_map": {},
+  "log_tail": [
+    {
+      "timestamp": "2026-06-22T08:37:41.887Z",
+      "agent": "none",
+      "files_changed": [
+        "src\\compressor.ts"
+      ],
+      "summary": "IDE: 1 file(s) saved — src\\compressor.ts",
+      "accepted": true,
+      "session_id": "98551d52-6899-4be7-8dc3-cde1b175aef9"
+    },
+    {
+      "timestamp": "2026-06-22T08:43:54.585Z",
+      "agent": "none",
+      "files_changed": [
+        "src\\compressor.ts"
+      ],
+      "summary": "IDE: 1 file(s) saved — src\\compressor.ts",
+      "accepted": true,
+      "session_id": "cb4787b1-9f0f-40e2-becd-9d25300b906b"
+    },
+    {
+      "timestamp": "2026-06-22T15:09:18.710Z",
+      "agent": "none",
+      "files_changed": [
+        "agentox-vscode\\package.json",
+        "agentox-vscode\\src\\extension.ts",
+        "agentox-vscode\\src\\provider.ts"
+      ],
+      "summary": "IDE: 3 file(s) saved — agentox-vscode\\package.json, agentox-vscode\\src\\extension.ts, agentox-vscode\\src\\provider.ts",
+      "accepted": true,
+      "session_id": "4c69fc82-62ac-417c-a5d8-d008590b155e"
+    },
+    {
+      "timestamp": "2026-06-22T16:54:27.917Z",
+      "agent": "none",
+      "files_changed": [
+        "package.json"
+      ],
+      "summary": "IDE: 1 file(s) saved — package.json",
+      "accepted": true,
+      "session_id": "923c1952-9020-4a86-a322-81025bf3d6ff"
+    },
+    {
+      "timestamp": "2026-06-23T16:26:21.868Z",
+      "agent": "none",
+      "files_changed": [
+        "agentox-vscode\\agentox-0.1.0.vsix"
+      ],
+      "summary": "IDE: 1 file(s) saved — agentox-vscode\\agentox-0.1.0.vsix",
+      "accepted": true,
+      "session_id": "db056e1e-c65a-4971-a0b8-279e7b97bccf"
+    },
+    {
+      "timestamp": "2026-06-23T16:28:34.697Z",
+      "agent": "none",
+      "files_changed": [
+        "agentox-vscode\\package.json"
+      ],
+      "summary": "IDE: 1 file(s) saved — agentox-vscode\\package.json",
+      "accepted": true,
+      "session_id": "eccb0444-c934-484f-8245-8b08af391241"
+    },
+    {
+      "timestamp": "2026-06-23T16:28:51.056Z",
+      "agent": "none",
+      "files_changed": [
+        "agentox-vscode\\agentox-0.1.0.vsix"
+      ],
+      "summary": "IDE: 1 file(s) saved — agentox-vscode\\agentox-0.1.0.vsix",
+      "accepted": true,
+      "session_id": "0784260c-44fe-404d-9ef6-2afbba400050"
+    },
+    {
+      "timestamp": "2026-06-23T16:40:04.985Z",
+      "agent": "none",
+      "files_changed": [
+        ".gitignore",
+        "README.md",
+        "agentox-cloud/.gitignore",
+        "agentox-cloud/AGENTS.md",
+        "agentox-cloud/CLAUDE.md",
+        "agentox-cloud/README.md",
+        "agentox-cloud/eslint.config.mjs",
+        "agentox-cloud/next.config.ts",
+        "agentox-cloud/package-lock.json",
+        "agentox-cloud/package.json",
+        "agentox-cloud/postcss.config.mjs",
+        "agentox-cloud/public/file.svg",
+        "agentox-cloud/public/globe.svg",
+        "agentox-cloud/public/next.svg",
+        "agentox-cloud/public/vercel.svg",
+        "agentox-cloud/public/window.svg",
+        "agentox-cloud/schema.sql",
+        "agentox-cloud/src/app/api/pull/route.ts",
+        "agentox-cloud/src/app/api/sync/route.ts",
+        "agentox-cloud/src/app/api/webhook/route.ts",
+        "agentox-cloud/src/app/dashboard/page.tsx",
+        "agentox-cloud/src/app/favicon.ico",
+        "agentox-cloud/src/app/globals.css",
+        "agentox-cloud/src/app/layout.tsx",
+        "agentox-cloud/src/app/page.tsx",
+        "agentox-cloud/src/lib/stripe.ts",
+        "agentox-cloud/src/lib/supabase.ts",
+        "agentox-cloud/src/middleware.ts",
+        "agentox-cloud/tsconfig.json",
+        "agentox-vscode/agentox-0.1.0.vsix",
+        "agentox-vscode/dist/extension.js",
+        "agentox-vscode/package-lock.json",
+        "agentox-vscode/package.json",
+        "agentox-vscode/src/extension.ts",
+        "agentox-vscode/src/provider.ts",
+        "agentox-vscode/src/statusbar.ts",
+        "agentox-vscode/src/watcher.ts",
+        "cold-verify",
+        "ct4",
+        "ct5",
+        "ct6",
+        "m.md",
+        "package.json",
+        "src/bootstrap.ts",
+        "src/commands/cloud-pull.ts",
+        "src/commands/push.ts",
+        "src/commands/snapshot.ts",
+        "src/commands/switch.ts",
+        "src/commands/watch.ts",
+        "src/compressor.ts",
+        "src/index.ts",
+        "src/scanners/repo-scanner.ts",
+        "src/watchers/file-watcher.ts",
+        "test/hello.ts",
+        "test/testing1.md"
+      ],
+      "commit_message": "Prepared for public launch",
+      "summary": "Prepared for public launch",
+      "accepted": true,
+      "session_id": "bffab32f-988e-414f-a21e-186b455bff86"
+    },
+    {
+      "timestamp": "2026-06-23T16:46:29.598Z",
+      "agent": "none",
+      "files_changed": [
+        "README.md"
+      ],
+      "summary": "IDE: 1 file(s) saved — README.md",
+      "accepted": true,
+      "session_id": "555d865f-12a5-45fb-b443-8e8348574d8a"
+    },
+    {
+      "timestamp": "2026-06-23T16:46:38.662Z",
+      "agent": "none",
+      "files_changed": [
+        "README.md"
+      ],
+      "summary": "IDE: 1 file(s) saved — README.md",
+      "accepted": true,
+      "session_id": "3d179e84-9331-4201-817b-5adb028e8949"
+    }
+  ],
+  "fingerprint": "b1173cec63c6"
+}

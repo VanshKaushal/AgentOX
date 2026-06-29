@@ -137,5 +137,6 @@ class AgentItem extends vscode.TreeItem {
         arguments: [] 
       };
     }
+    this.contextValue = type;
   }
 }

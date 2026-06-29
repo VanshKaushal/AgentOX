@@ -72,10 +72,12 @@ var AgentOXProvider = class {
     const aDir = path.join(this.ws, "agentos");
     if (!fs.existsSync(aDir)) {
       return [new AgentItem(
-        "Not initialized",
-        "Run: agentox init",
+        "Not initialized (Click to setup)",
+        "Click to automatically initialize AgentOS",
         [],
-        "warning"
+        "warning",
+        vscode.TreeItemCollapsibleState.None,
+        "agentox.initProject"
       )];
     }
     try {
@@ -173,6 +175,7 @@ var AgentItem = class extends vscode.TreeItem {
         arguments: []
       };
     }
+    this.contextValue = type;
   }
 };
 
@@ -351,8 +354,19 @@ function activate(ctx) {
     vscode4.commands.registerCommand("agentox.switchAgent", () => switchAgent(ws)),
     vscode4.commands.registerCommand("agentox.setObjective", () => setObjective(ws)),
     vscode4.commands.registerCommand("agentox.addTask", () => addTask(ws)),
+    vscode4.commands.registerCommand("agentox.completeTask", (item) => completeTask(ws, item)),
     vscode4.commands.registerCommand("agentox.viewStatus", () => viewStatus(ws)),
     vscode4.commands.registerCommand("agentox.openDashboard", () => openDashboard(ctx)),
+    vscode4.commands.registerCommand("agentox.initProject", () => {
+      try {
+        const { execSync } = require("child_process");
+        execSync("agentox init", { cwd: ws });
+        vscode4.window.showInformationMessage("\u2713 AgentOX successfully initialized!");
+        provider?.refresh();
+      } catch (e) {
+        vscode4.window.showErrorMessage('Failed to initialize. Try running "agentox init" in terminal or install globally: npm install -g .');
+      }
+    }),
     vscode4.commands.registerCommand("agentox.copyContext", async () => {
       try {
         const { execSync } = require("child_process");
@@ -456,6 +470,28 @@ async function addTask(ws) {
   execSync(`agentox task add "${task}"`, { cwd: ws });
   provider?.refresh();
   vscode4.window.showInformationMessage(`\u2713 Task added: "${task}"`);
+}
+async function completeTask(ws, item) {
+  const { execSync } = require("child_process");
+  if (item && item.label) {
+    const match = item.label.match(/^(\d+)\./);
+    if (match) {
+      const idx = match[1];
+      execSync(`agentox task done ${idx}`, { cwd: ws });
+      provider?.refresh();
+      vscode4.window.showInformationMessage(`\u2713 Task ${idx} completed!`);
+      return;
+    }
+  }
+  const taskStr = await vscode4.window.showInputBox({
+    prompt: "Enter task number (e.g., 1) or text to complete",
+    placeHolder: "1"
+  });
+  if (!taskStr)
+    return;
+  execSync(`agentox task done "${taskStr}"`, { cwd: ws });
+  provider?.refresh();
+  vscode4.window.showInformationMessage(`\u2713 Task completed!`);
 }
 function viewStatus(ws) {
   const { execSync } = require("child_process");

@@ -1,63 +1,87 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { 
+  getUserFromToken, 
+  getOrCreateProject, 
+  checkUsageLimit,
+  incrementUsage,
+  supabaseAdmin 
+} from '@/lib/supabase';
 
 export async function POST(req: NextRequest) {
+  // Auth
   const auth = req.headers.get('authorization');
-  if (!auth || !auth.startsWith('Bearer ')) {
+  if (!auth?.startsWith('Bearer ')) {
     return NextResponse.json(
-      { error: 'Missing token. Get one at agentox.dev' },
+      { error: 'Missing token. Get one at agentox.dev/dashboard' },
       { status: 401 }
     );
   }
   const token = auth.replace('Bearer ', '');
-  
-  // For local testing — accept "test_token"
-  // For prod — validate against Supabase
-  if (token !== 'test_token' && !process.env.SUPABASE_URL) {
+  const user = await getUserFromToken(token);
+  if (!user) {
     return NextResponse.json(
-      { error: 'Invalid token' },
+      { error: 'Invalid token. Login at agentox.dev' },
       { status: 403 }
     );
   }
 
-  try {
-    const body = await req.json();
-    const { project_name, state, tasks, decisions, history } = body;
-    
-    if (!project_name || !state) {
-      return NextResponse.json(
-        { error: 'Missing project_name or state' },
-        { status: 400 }
-      );
-    }
-
-    // Store in memory for local testing
-    // Replace with Supabase in prod
-    const stored = {
-      project_name,
-      state,
-      tasks,
-      decisions,
-      history,
-      synced_at: new Date().toISOString()
-    };
-
-    // Write to local temp file for testing
-    const fs = require('fs');
-    const os = require('os');
-    const path = require('path');
-    const tmpPath = path.join(os.tmpdir(), `agentox_${project_name}.json`);
-    fs.writeFileSync(tmpPath, JSON.stringify(stored, null, 2));
-
+  // Check usage limit
+  const usage = await checkUsageLimit(user.id);
+  if (!usage.allowed) {
     return NextResponse.json({
-      success: true,
-      message: 'Context synced',
-      project: project_name,
-      synced_at: stored.synced_at
+      error: `Sync limit reached (${usage.syncs}/${usage.limit}). Upgrade at agentox.dev`,
+      upgrade_url: 'https://agentox.dev/pricing'
+    }, { status: 429 });
+  }
+
+  // Parse body
+  let body: any;
+  try { body = await req.json(); } 
+  catch { return NextResponse.json({error:'Invalid JSON'},{status:400}); }
+
+  const { project_name, state, tasks, decisions, history } = body;
+  if (!project_name) {
+    return NextResponse.json({error:'Missing project_name'},{status:400});
+  }
+
+  // Get or create project
+  const project = await getOrCreateProject(user.id, project_name);
+  if (!project) {
+    return NextResponse.json({error:'Failed to create project'},{status:500});
+  }
+
+  // Save snapshot
+  const { error: snapError } = await supabaseAdmin
+    .from('snapshots')
+    .insert({
+      project_id: project.id,
+      state: state || {},
+      tasks: tasks || {},
+      decisions: decisions || {},
+      history: history || [],
+      synced_at: new Date().toISOString()
     });
-  } catch(e) {
+
+  if (snapError) {
     return NextResponse.json(
-      { error: 'Sync failed: ' + (e as Error).message },
+      { error: 'Failed to save: ' + snapError.message },
       { status: 500 }
     );
   }
+
+  // Update project timestamp
+  await supabaseAdmin
+    .from('projects')
+    .update({ updated_at: new Date().toISOString() })
+    .eq('id', project.id);
+
+  // Increment usage
+  await incrementUsage(user.id);
+
+  return NextResponse.json({
+    success: true,
+    project: project_name,
+    synced_at: new Date().toISOString(),
+    usage: `${usage.syncs + 1}/${usage.limit} syncs`
+  });
 }

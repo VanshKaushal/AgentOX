@@ -4,3 +4,7 @@ ct5/
 ct6/
 testfix/
 cold-verify/
+dist/
+.claude/
+.cursor/
+*.tgz

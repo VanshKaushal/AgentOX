@@ -2,7 +2,7 @@
   "name": "agentox",
   "displayName": "AgentOX",
   "description": "Zero-command AI agent context continuity",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "publisher": "VanshKaushal",
   "engines": { "vscode": "^1.85.0" },
   "categories": ["Other","AI"],
@@ -18,8 +18,23 @@
       {"command":"agentox.viewStatus","title":"AgentOX: View Status"},
       {"command":"agentox.openDashboard","title":"AgentOX: Open Dashboard"},
       {"command":"agentox.copyContext","title":"AgentOX: Copy Context to Clipboard"},
-      {"command":"agentox.initProject","title":"AgentOX: Initialize Project"}
+      {"command":"agentox.initProject","title":"AgentOX: Initialize Project"},
+      {"command":"agentox.completeTask","title":"AgentOX: Complete Task", "icon": "$(check)"}
     ],
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "agentox.addTask",
+          "when": "viewItem == tasks",
+          "group": "inline"
+        },
+        {
+          "command": "agentox.completeTask",
+          "when": "viewItem == task",
+          "group": "inline"
+        }
+      ]
+    },
     "views": {
       "explorer": [{
         "id": "agentoxPanel",
