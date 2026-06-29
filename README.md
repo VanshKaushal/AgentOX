@@ -1,8 +1,8 @@
 <div align="center">
-  <h1>🤖 AgentOS</h1>
+  <h1>🤖 AgentOX</h1>
   <p><b>Cross-Agent Continuity Layer for AI Coding Assistants</b></p>
 
-  [![npm version](https://badge.fury.io/js/agentos.svg)](https://badge.fury.io/js/agentos)
+  [![npm version](https://badge.fury.io/js/agentox.svg)](https://badge.fury.io/js/agentox)
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 </div>
@@ -13,11 +13,11 @@
 
 When you work with AI coding assistants (like Cursor, Claude Engineer, Aider, OpenCode), they lack **shared context**. Switching from one agent to another means losing your current tasks, architectural decisions, recent changes, and state.
 
-## 🌟 What is AgentOS?
+## 🌟 What is AgentOX?
 
-**AgentOS** is a continuity layer designed to seamlessly bridge the gap between different AI assistants. It creates a robust, file-based memory layer (`agentos/`) directly in your project repository. 
+**AgentOX** is a continuity layer designed to seamlessly bridge the gap between different AI assistants. It creates a robust, file-based memory layer (`.agentos/`) directly in your project repository. 
 
-Whenever you switch assistants, AgentOS generates a highly-condensed **bootstrap handoff prompt** containing:
+Whenever you switch assistants, AgentOX generates a highly-condensed **bootstrap handoff prompt** containing:
 - Pending Tasks
 - Hard Architectural Decisions
 - Recent History & Git changes
@@ -30,7 +30,7 @@ Your next AI agent can immediately pick up where the last one left off!
 ## ⚡ Features
 
 - **🧠 Shared Memory State**: Maintain task lists, goals, and architectural decisions across sessions.
-- **🔄 Seamless Handoffs**: Automatically generate a "bootstrap" prompt for your next AI agent via `agentos switch <agent>`.
+- **🔄 Seamless Handoffs**: Automatically generate a "bootstrap" prompt for your next AI agent via `agentox switch <agent>`.
 - **📸 Intelligent Snapshots**: Take snapshots of your workspace before handing it over to another agent.
 - **🛡️ Hard Decisions**: Enforce architectural guidelines that AI agents are strictly instructed *not* to override (`--hard`).
 - **🔗 Git Integration**: Automatically logs AI agent activity into the execution log on every `git commit`.
@@ -39,30 +39,53 @@ Your next AI agent can immediately pick up where the last one left off!
 
 ## 🛠️ Installation
 
-AgentOS is built with Node.js and TypeScript. You can install it globally via npm:
+### New in v0.2.0
+- Zero-git file watching
+- Works on cloned repos  
+- VSCode/Cursor/Windsurf extension
+- Auto-starts on folder open
+- One-click agent switch
 
+**Install CLI:**
 ```bash
-npm install -g agentos
+npm install -g agentox
 ```
 
+**Install Extension:**
+Search for "AgentOX" in your IDE's extension marketplace and install it.
+
+## IDE Compatibility
+
+| IDE / Tool | MCP Auto | Bootstrap Fallback |
+|------------|----------|--------------------|
+| Claude Code | ✅ Native | ✅ |
+| Cursor | ✅ Native | ✅ |
+| Windsurf | ✅ Native | ✅ |
+| Antigravity | ✅ (via MCP config) | ✅ |
+| VS Code + Copilot | ❌ (needs Cline/RooCode) | ✅ |
+| ChatGPT | ❌ | ✅ |
+| Any other AI | ❌ | ✅ |
+
+**AgentOX works everywhere via Bootstrap fallback.
+MCP gives you zero-paste automation in supported IDEs.**
 
 ---
 
 ## 📚 Quick Start
 
-### 1. Initialize AgentOS in your project
+### 1. Initialize AgentOX in your project
 
 Navigate to your existing project repository and run:
 
 ```bash
-agentos init
+agentox init
 ```
 *This creates the `.agentos/` directory and sets up the continuity layer, including a Git post-commit hook for tracking changes.*
 
 ### 2. Set your current Agent
 
 ```bash
-agentos use claude
+agentox use claude
 ```
 *(Options: claude, cursor, aider, opencode)*
 
@@ -70,14 +93,14 @@ agentos use claude
 
 ```bash
 # Add pending tasks
-agentos task add "Build the login authentication flow"
-agentos task add "Setup PostgreSQL database"
+agentox task add "Build the login authentication flow"
+agentox task add "Setup PostgreSQL database"
 
 # Mark a task as done
-agentos task done 1
+agentox task done 1
 
 # Enforce an architectural decision
-agentos decision add "Use strictly React and functional components" --hard
+agentox decision add "Use strictly React and functional components" --hard
 ```
 
 ### 4. Switch to a new Agent
@@ -85,14 +108,14 @@ agentos decision add "Use strictly React and functional components" --hard
 If you want to move from your current IDE/agent to another (e.g., from Cursor to Claude), use:
 
 ```bash
-agentos switch cursor
+agentox switch cursor
 ```
 *This command auto-saves a snapshot, generates a Bootstrap Prompt, copies it to your clipboard, and sets the active agent.*
 
 ### 5. Check Status
 
 ```bash
-agentos status
+agentox status
 ```
 *Displays the current state, active agent, pending tasks, recent decisions, and file tree drift.*
 
@@ -102,48 +125,24 @@ agentos status
 
 | Command | Description |
 |---|---|
-| `agentos init` | Initializes AgentOS in the current repo, setting up state files and git hooks. |
-| `agentos status` | Displays the current agent status, tasks, and system state. |
-| `agentos use <agent>` | Sets the active agent without generating a handoff prompt. |
-| `agentos switch <agent>` | Snapshots state, generates a handoff prompt, copies it, and sets active agent. |
-| `agentos task add/done/list` | Manage your agent's pending and completed tasks. |
-| `agentos decision add/list` | Manage architectural decisions. Use `--hard` to make them strict for AI. |
-| `agentos snapshot` | Manually captures a snapshot of the workspace and state. |
-| `agentos rollback` | Reverts the workspace to a previous snapshot. |
-| `agentos log-commit` | Logs git commits to the execution history (used mainly by the auto-hook). |
-| `agentos repair` | Validates and fixes corrupted `.agentos/` JSON state files. |
+| `agentox init` | Initializes AgentOX in the current repo, setting up state files and git hooks. |
+| `agentox status` | Displays the current agent status, tasks, and system state. |
+| `agentox use <agent>` | Sets the active agent without generating a handoff prompt. |
+| `agentox switch <agent>` | Snapshots state, generates a handoff prompt, copies it, and sets active agent. |
+| `agentox task add/done/list` | Manage your agent's pending and completed tasks. |
+| `agentox decision add/list` | Manage architectural decisions. Use `--hard` to make them strict for AI. |
+| `agentox snapshot` | Manually captures a snapshot of the workspace and state. |
+| `agentox rollback` | Reverts the workspace to a previous snapshot. |
+| `agentox log-commit` | Logs git commits to the execution history (used mainly by the auto-hook). |
+| `agentox repair` | Validates and fixes corrupted `.agentos/` JSON state files. |
 
 ---
 
-## ⚙️ Architecture & Data Structure
 
-AgentOS operates completely locally, saving data into a hidden `agentos/` directory in your root folder. This ensures memory travels with the repository.
-
-```mermaid
-graph TD;
-    A[User / Dev] -->|Runs CLI| B(AgentOS Core);
-    B --> C{agentos/};
-    C -->|state.json| D[Active Agent & Goal];
-    C -->|decisions.json| E[Arch Decisions];
-    C -->|task_graph.json| F[Pending Tasks];
-    C -->|execution_log.jsonl| G[Commit History];
-    
-    B -->|agentos switch| H[Bootstrap Prompt];
-    H --> I[Claude / Cursor / Aider];
-    I -->|Reads/Applies Context| J[Codebase];
-```
-
-The system uses:
-- **`state.json`**: Current active agent, drift score, and session details.
-- **`task_graph.json`**: A directed array of pending and completed tasks.
-- **`decisions.json`**: A history of architectural guidelines (`overridable` or `hard`).
-- **`execution_log.jsonl`**: A stream of commit histories mapping what the agents have built.
-
----
 
 ## 🤝 Contributing
 
-We welcome contributions to expand AgentOS to more platforms, improve the prompt templates, and enhance state tracking!
+We welcome contributions to expand AgentOX to more platforms, improve the prompt templates, and enhance state tracking!
 1. Fork the repo.
 2. Clone it locally and run `npm install`.
 3. Create a feature branch: `git checkout -b feature/my-cool-idea`.
